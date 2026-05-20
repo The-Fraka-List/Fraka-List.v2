@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Fraka List</title>
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/nav.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/roulette.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden; 
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+        }
+        .app-wrapper {
+            flex: 1;
+            margin-top: var(--nav-height);
+            overflow: hidden;
+    }
+        .main-content {
+            display: none;
+        }
+        .main-content.active {
+            display: block;
+            animation: fadeIn var(--transition-base) ease;
+        }
+
+        .list-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: var(--space-6);
+            align-items: start;
+        }
+        
+        .sidebar-list {
+            max-height: calc(100vh - var(--nav-height) - var(--space-16));
+            overflow-y: auto;
+            padding-right: var(--space-2);
+        }
+        
+        .sidebar-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: var(--radius-full);
+        }
+
+        .nav__link-btn {
+            background: none;
+            border: none;
+            padding: var(--space-2) var(--space-4);
+            color: var(--text-secondary);
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+            position: relative;
+        }
+        .nav__link-btn:hover {
+            color: var(--text-primary);
+        }
+        .nav__link-btn.active {
+            color: var(--accent-light);
+        }
+        .nav__link-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: var(--space-4);
+            right: var(--space-4);
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="nav">
+        <div class="nav__inner">
+            <div class="nav__logo">
+                <span class="text-display" style="font-size: 1.4rem; font-weight: 700; letter-spacing: 0.05em;">
+                    FRAKA <span class="text-accent">LIST</span>
+                </span>
+            </div>
+            
+            <div class="nav__links" style="display: flex; gap: var(--space-2);">
+                <button class="nav__link-btn active" onclick="switchTab('tab-list', this)">List</button>
+                <button class="nav__link-btn" onclick="switchTab('tab-leaderboard', this)">Leaderboard</button>
+                <button class="nav__link-btn" onclick="switchTab('tab-roulette', this)">Roulette</button>
+            </div>
+            
+            <div style="display: flex; gap: var(--space-3); align-items: center;">
+                <a href="https://discord.gg/5Ht99YYBwn" target="_blank" class="btn btn--secondary" style="padding: var(--space-2) var(--space-4); font-size: 0.85rem; font-family: var(--font-mono); font-weight: bold; text-decoration: none; border-radius: var(--radius-md); background: #5865F2; border-color: #5865F2; color: white;">DISCORD</a>
+                <a href="https://discord.gg/5Ht99YYBwn" class="btn btn--primary" style="padding: var(--space-2) var(--space-4); font-size: 0.85rem; font-family: var(--font-mono); font-weight: bold; text-decoration: none; border-radius: var(--radius-md);">SUBIR RECORD</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <section id="tab-list" class="main-content active">
+            <div class="list-layout">
+                <div class="sidebar-list" id="levels-sidebar"></div>
+                
+                <div class="level-detail-panel" id="level-details"></div>
+            </div>
+        </section>
+
+        <section id="tab-leaderboard" class="main-content">
+            <div class="page-hero" style="padding: var(--space-8) 0 var(--space-6);">
+                <div class="page-hero__label">Puntuaciones Globales</div>
+                <h1 style="font-family: var(--font-display); font-size: 3rem; margin: 1;">Top Jugadores</h1>
+            </div>
+            <div id="leaderboard-container"></div>
+        </section>
+
+        <section id="tab-roulette" class="main-content">
+            <div class="roulette-layout">
+
+                <aside class="roulette-sidebar">
+                    <div class="roulette-sidebar__block">
+                        <span class="roulette-sidebar__label">Minijuego</span>
+                        <h2 class="roulette-sidebar__title">Demon Roulette</h2>
+                        <p class="roulette-sidebar__desc">Completa un porcentaje de cada nivel asignado al azar. ¿Hasta dónde llegarás?</p>
+                    </div>
+
+                    <div class="roulette-sidebar__block">
+                        <button id="roulette-btn-start" class="btn btn--primary roulette-btn-full">INICIAR</button>
+                        <button id="roulette-btn-giveup" class="btn roulette-btn-full roulette-btn-danger" style="display:none;">RENDIRSE</button>
+                    </div>
+
+                    <div class="roulette-sidebar__block">
+                        <span class="roulette-sidebar__label">Progreso manual</span>
+                        <div class="roulette-sidebar__savebtns">
+                            <button id="roulette-btn-import" class="btn btn--secondary">Importar</button>
+                            <button id="roulette-btn-export" class="btn btn--secondary" disabled>Exportar</button>
+                        </div>
+                        <input type="file" id="roulette-file-input" accept=".json" style="display:none;">
+                    </div>
+
+                    <div id="roulette-current-panel" class="roulette-current" style="display:none;">
+                        <span class="roulette-sidebar__label">Nivel actual</span>
+                        <div id="roulette-current-name" class="roulette-current__name"></div>
+                        <div id="roulette-current-rank" class="roulette-current__rank"></div>
+                        <div class="roulette-current__input-row">
+                            <input type="number" id="roulette-percent-input" class="roulette-input" placeholder="Tu porcentaje" min="1" max="100">
+                            <button id="roulette-btn-done" class="btn btn--primary">LISTO</button>
+                        </div>
+                    </div>
+
+                    <div id="roulette-toasts"></div>
+                </aside>
+
+                <div class="roulette-levels-container" id="roulette-levels-container">
+                    <div id="roulette-levels-list" class="roulette-levels-list">
+                        <div class="roulette-empty">
+                            <p>Iniciá la ruleta para comenzar.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script src="main.js"></script>
+</body>
+</html>
