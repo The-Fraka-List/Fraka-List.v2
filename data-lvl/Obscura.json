@@ -1,0 +1,18 @@
+{
+    "id": 96039801,
+    "name": "Obscura",
+    "author": "Eridani",
+    "creators": ["MercuryDT, YakobNugget, Gizbro, Eridani, AirSavage, GamerKnight750, nCylix, Xolarzz, iMinaY, Vantablack, Marwec, Lemons, Studt, Rockwizard5 and Destriv"],
+    "verifier": "Aku",
+    "verification": "https://www.youtube.com/watch?v=YWSQCrQEgXA",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=LMIm2Fd-7Oo",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

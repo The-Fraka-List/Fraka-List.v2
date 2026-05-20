@@ -1,0 +1,30 @@
+{
+    "id": 97183213,
+    "name": "Overtime",
+    "author": "KlaurosssS",
+    "creators": ["KlaurosssS, LaserSword33, ISSLOL, Retro Head, Airtime [GD], WaRiox, Ellisha, Ji, AbysS, Hir0shi, UltraS4, Vyzionr, Zary_"],
+    "verifier": "Toxic",
+    "verification": "https://www.youtube.com/watch?v=MgzF_udTtks",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "AleezCourtz",
+            "link": "https://www.youtube.com/watch?v=tvbnuzoXfK8",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Ares",
+            "link": "https://www.youtube.com/watch?v=bVyVRMfSeSw",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Fiumba_47",
+            "link": "https://www.youtube.com/watch?v=dnbcenBECtY",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "id": 59899374,
+    "name": "Prismatic Haze",
+    "author": "Gizbro",
+    "creators": ["Gizbro & Moosh"],
+    "verifier": "xReizer",
+    "verification": "https://youtu.be/vGvq2tpchO8?si=dmvq92pX5NUXSs_O",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Fiumba_47",
+            "link": "https://www.youtube.com/watch?v=RVjnZsqUu7o",
+            "percent": 100,
+            "hz": 75
+        },
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=LqszXod505A",
+            "percent": 100,
+            "hz": 160
+        },
+        {
+            "user": "Ares",
+            "link": "https://www.youtube.com/watch?v=w0rMMEsm6Q8",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "id": 81148582,
+    "name": "Sweater Weather",
+    "author": "VelYT",
+    "creators": ["VelYT"],
+    "verifier": "S3b4s506_",
+    "verification": "https://www.youtube.com/watch?v=zCONCyj0nXc",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Aku",
+            "link": "https://www.youtube.com/watch?v=Wuy8XkEYMO0",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=xR0-I3rCB7s",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "id": 18697406,
+    "name": "Retention",
+    "author": "WOOGI1411",
+    "creators": ["WOOGI1411"],
+    "verifier": "Shiku",
+    "verification": "https://www.youtube.com/watch?v=J6dfYyrYlEk",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=3y_XbqGpkmI",
+            "percent": 100,
+            "hz": 160
+        }
+    ]
+}
