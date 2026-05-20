@@ -1,0 +1,24 @@
+{
+    "id": 69108628,
+    "name": "Broken Signal",
+    "author": "Grax",
+    "creators": ["Grax"],
+    "verifier": "Eduh",
+    "verification": "https://www.youtube.com/watch?v=G39M5bBx0dI",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=XGyHhjhtKjE",
+            "percent": 100,
+            "hz": 160
+        },
+        {
+            "user": "Kepta_bb",
+            "link": "https://www.youtube.com/watch?v=mCr4o_1k7N0",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

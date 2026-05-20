@@ -1,0 +1,19 @@
+{
+    "id": 26133601,
+    "name": "Athanatos",
+    "author": "Exenity",
+    "creators": ["Exenity and more"],
+    "verifier": "Toxic",
+    "verification": "https://www.youtube.com/watch?v=updKNVvOSS0",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+
+            "user": "Fiumba_47",
+            "link": "https://www.youtube.com/watch?v=fHGvk_VLVvk",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

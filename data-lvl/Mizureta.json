@@ -1,0 +1,18 @@
+{
+    "id": 97183213,
+    "name": "Mizureta",
+    "author": "dutchiee",
+    "creators": ["dutchiee and more"],
+    "verifier": "Enzo",
+    "verification": "https://www.youtube.com/watch?v=JRryxKTnPDk",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=DfKAcu95ISg",
+            "percent": 100,
+            "hz": 90
+        }
+    ]
+}

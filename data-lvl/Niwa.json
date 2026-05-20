@@ -1,0 +1,54 @@
+{
+    "id": 97183213,
+    "name": "Niwa",
+    "author": "Teno",
+    "creators": ["Teno, Mrgm, ar12, Titoalper, KrazyGFX, BeClan, Asuith, Pedro, Blaze, Genoxide, peng"],
+    "verifier": "Enzo",
+    "verification": "https://www.youtube.com/watch?v=b4ZMERDWruA",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Benja_dark",
+            "link": "https://www.youtube.com/watch?v=O5O-vvLwoFw",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=VChUOXeOtqs",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Fiumba_47",
+            "link": "https://www.youtube.com/watch?v=etumD6BjDI4",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Aku",
+            "link": "https://www.youtube.com/watch?v=NfVrTpjSIQI",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "xReizer",
+            "link": "https://www.youtube.com/watch?v=-LoG84Bd1Ww",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=FTUGM_UUx4U",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=oMle-FJ4cL0",
+            "percent": 100,
+            "hz": 280
+        }
+    ]
+}

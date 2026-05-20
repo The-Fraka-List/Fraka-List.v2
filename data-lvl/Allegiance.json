@@ -1,0 +1,36 @@
+{
+    "id": 97183213,
+    "name": "Allegiance",
+    "author": "nikroplays",
+    "creators": ["nikroplays"],
+    "verifier": "Enzo",
+    "verification": "https://www.youtube.com/watch?v=RProch8skuE",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Eduh",
+            "link": "https://www.youtube.com/watch?v=SZVLVdxFr38",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Kepta_bb",
+            "link": "https://www.youtube.com/watch?v=tEhkjrTPY4c",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "Fiumba_47",
+            "link": "https://www.youtube.com/watch?v=-Nbx5btLFb8",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=kmYpelMkqwM",
+            "percent": 100,
+            "hz": 160
+        }
+    ]
+}

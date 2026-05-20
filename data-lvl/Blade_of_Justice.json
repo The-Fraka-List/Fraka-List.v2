@@ -1,0 +1,24 @@
+{
+    "id": 35448603,
+    "name": "Blade of Justice",
+    "author": "Manix648",
+    "creators": ["Manix648"],
+    "verifier": "Toxic",
+    "verification": "https://www.youtube.com/watch?v=wwszfxZHqGo",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=9KwFTFA1Tmc",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "AleezCourtz",
+            "link": "https://www.youtube.com/watch?v=1BAg-j8NtB8",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

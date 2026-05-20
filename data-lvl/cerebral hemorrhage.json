@@ -1,0 +1,24 @@
+{
+    "id": 88853479,
+    "name": "cerebral hemorrhage",
+    "author": "NateFH",
+    "creators": ["NateFH"],
+    "verifier": "S3b4s506_",
+    "verification": "https://www.youtube.com/watch?v=qMHNJVJ8rG8",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=2G-M5LjueDQ",
+            "percent": 100,
+            "hz": 144
+        },
+        {
+            "user": "xReizer",
+            "link": "https://youtu.be/0RwOE9TxlpI?si=MGMdokXPzDsbjVoN",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

@@ -1,0 +1,72 @@
+{
+    "id": 61079355,
+    "name": "Acu",
+    "author": "neigefeu",
+    "creators": ["neigefeu"],
+    "verifier": "Kepta_bb",
+    "verification": "https://www.youtube.com/watch?v=uznR1hfon-A",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+         {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=Wk-QtmbRKM0",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "PlayLino",
+            "link": "https://www.youtube.com/watch?v=fq_ZyDEhtck",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "xReizer",
+            "link": "https://www.youtube.com/watch?v=FsmAw5muyAE",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=ObimlcGz1YI",
+            "percent": 100,
+            "hz": 144
+        },
+        {
+            "user": "Fabygamer",
+            "link": "https://www.youtube.com/watch?v=mcgXln22Dqc",
+            "percent": 100,
+            "hz": 90
+        },
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=lwovFmGzzhw",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "AssassinDarkEXE",
+            "link": "https://www.youtube.com/watch?v=EuljMTgco8A",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Fiumba_47",
+            "link": "https://www.youtube.com/watch?v=kz-tK3z1vio",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Aku",
+            "link": "https://www.youtube.com/watch?v=DCiquTIQlQI",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Gilberto_Dash",
+            "link": "https://www.youtube.com/watch?v=YCMpJUeo1wc",
+            "percent": 100,
+            "hz": 144
+        }
+    ]
+}

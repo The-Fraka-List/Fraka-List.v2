@@ -1,0 +1,18 @@
+{
+    "id": 45866767,
+    "name": "Crimson Planet",
+    "author": "TrueOmega",
+    "creators": ["TrueOmega"],
+    "verifier": "Fiumba_47",
+    "verification": "https://youtu.be/Cc8-Z5MMgto?si=F9-yuwb7KAQdA45c",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "PlayLino",
+            "link": "https://www.youtube.com/watch?v=2a0xHcxV0Sw",
+            "percent": 100,
+            "hz": 80
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "id": 60284098,
+    "name": "Maybe Possibly Thing",
+    "author": "iNubble",
+    "creators": ["iNubble"],
+    "verifier": "Toxic",
+    "verification": "https://www.youtube.com/watch?v=eTVrGuG3vHY",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "AleezCourtz",
+            "link": "https://www.youtube.com/watch?v=u8uKNt5yyHQ",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

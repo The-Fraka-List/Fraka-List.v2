@@ -1,0 +1,24 @@
+{
+    "id": 51791710,
+    "name": "Auditory Breaker",
+    "author": "LazerBlitz",
+    "creators": ["LazerBlitz and more"],
+    "verifier": "aku",
+    "verification": "https://www.youtube.com/watch?v=dN6ia_ZDXls",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=GmjLf19R9Us",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Kepta_bb",
+            "link": "https://www.youtube.com/watch?v=t1UYI2WG62M",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

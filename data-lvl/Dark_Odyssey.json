@@ -1,0 +1,18 @@
+{
+    "id": 63996127,
+    "name": "Dark Odyssey",
+    "author": "JonathanGD",
+    "creators": ["JonathanGD"],
+    "verifier": "TheGlaiCat",
+    "verification": "https://www.youtube.com/watch?v=Nfm6A8wXWnQ&t=420s",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Fabygamer",
+            "link": "https://www.youtube.com/watch?v=U_9qrKVgIEc",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

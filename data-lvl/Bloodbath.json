@@ -1,0 +1,60 @@
+{
+    "id": 10565740,
+    "name": "Bloodbath",
+    "author": "Riot",
+    "creators": ["Riot & more"],
+    "verifier": "S3b4s506_",
+    "verification": "https://www.youtube.com/watch?v=phWcY3g_a8o&pp=ygUYc2ViYXN0aWFucm01MDYgYmxvb2RiYXRo",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "AleezCourtz",
+            "link": "https://www.youtube.com/watch?v=z1s1uGGD2eY",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Playlino",
+            "link": "https://youtu.be/eIu5_1hrcWQ?si=UoUYiUTM44H15KEs",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=Qb4PrWx5Pgg",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Aku",
+            "link": "https://www.youtube.com/watch?v=nCpx1kitCBk",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Enzo",
+            "link": "https://www.youtube.com/watch?v=cLOxNiyGq_M",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Shiku",
+            "link": "https://www.youtube.com/watch?v=-61LQPbBFQ0",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Flame986",
+            "link": "https://www.youtube.com/watch?v=GWyf3Gv3EV4",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Kepta_bb",
+            "link": "https://www.youtube.com/watch?v=vRshgZIGg0k",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "id": 114321891,
+    "name": "Inside",
+    "author": "Hypno",
+    "creators": ["Hypno"],
+    "verifier": "xReizer",
+    "verification": "https://www.youtube.com/watch?v=DXuLCgJ9qv0&t=206s",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=_kV4PntuccI",
+            "percent": 100,
+            "hz": 144
+        },
+        {
+
+            "user": "Fabygamer",
+            "link": "https://www.youtube.com/watch?v=-mbtK-OFUeM&t=1s",
+            "percent": 100,
+            "hz": 90
+        }
+    ]
+}

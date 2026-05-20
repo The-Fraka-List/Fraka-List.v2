@@ -1,0 +1,48 @@
+{
+    "id": 97183213,
+    "name": "HyperSonic",
+    "author": "Viprin",
+    "creators": ["ZenthicAlpha, Vlacc, Serponge, nasgubb, Evasium622, Viprin, Rustam, Pan, Terron, Etzer, Dudex and Manix648"],
+    "verifier": "Eduh",
+    "verification": "https://www.youtube.com/watch?v=kB2In6rOwk0",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Toxic",
+            "link": "https://www.twitch.tv/videos/1934439348",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Benja_dark",
+            "link": "https://www.youtube.com/watch?v=6QVUx5T2uxk",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Enzo",
+            "link": "https://www.youtube.com/watch?v=E_79CCn1xo4",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Kepta_bb",
+            "link": "https://www.youtube.com/watch?v=aSwkLIrL__s&t=888s",
+            "percent": 100,
+            "hz": 144
+        },
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=rG9ZBiZVoKg",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=I6AOk4EGM80",
+            "percent": 100,
+            "hz": 144
+        }
+    ]
+}

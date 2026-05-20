@@ -1,0 +1,18 @@
+{
+    "id": 97183213,
+    "name": "Dismal Duststorm",
+    "author": "Multiverse55",
+    "creators": ["Multiverse55"],
+    "verifier": "Benja_dark",
+    "verification": "https://www.youtube.com/watch?v=Zb0-wsr-RuE",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=LilVro8HlPE",
+            "percent": 100,
+            "hz": 480
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "id": 62214792,
+    "name": "Azurite (Sillow)",
+    "author": "Sillow",
+    "creators": ["Sillow"],
+    "verifier": "Eduh",
+    "verification": "https://www.youtube.com/watch?v=r3bDdIvul8w",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "PlayLino",
+            "link": "https://www.youtube.com/watch?v=eJyWRtTtd_s",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=RmtlvmBKZ4k",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Fiumba_47",
+            "link": "https://www.youtube.com/watch?v=3J3NZYxKoJ4",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

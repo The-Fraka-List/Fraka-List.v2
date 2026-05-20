@@ -1,0 +1,36 @@
+{
+    "id": 68848817,
+    "name": "Moment",
+    "author": "Lexycat",
+    "creators": ["Lexycat & ICEDCave"],
+    "verifier": "Kepta_bb",
+    "verification": "https://youtu.be/o_syI3QVWXE?si=KqaU8jXSdGEChZNx",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Vlack",
+            "link": "https://www.youtube.com/watch?v=tP7ifD1I_HI",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=5u0yRF76GQ0",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "AleezCourtz",
+            "link": "https://www.youtube.com/watch?v=JX901mxD2Jc",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Ares",
+            "link": "https://www.youtube.com/watch?v=1ch42oBVRLM",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
