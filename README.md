@@ -15,6 +15,15 @@ El archivo principal es:
 - `index.html`: estructura de la página y tres secciones principales.
 - `main.js`: lógica de carga de datos, renderizado, navegación entre pestañas y funciones de la ruleta.
 
+## Página web
+
+[Pagina principal de la lista](https://the-fraka-list.github.io/Fraka-List.v2/)
+
+## Preview
+
+![preview](assets/img/preview.png)
+
+
 ## Pestañas principales
 
 La interfaz tiene tres pestañas en la barra de navegación:
