@@ -1,10 +1,10 @@
 # FRAKA LIST
 
-Una página web con una lista de niveles estilo "demon list" para un juego rítmico, con soporte para ver detalles de cada nivel, un ranking de jugadores y un minijuego de ruleta.
+Una página web con una lista de niveles estilo "demon list" con soporte para ver detalles de cada nivel, un ranking de jugadores y un minijuego de ruleta.
 
 ## ¿Qué es?
 
-`FRAKA LIST` es una interfaz web estática pensada para explorar y consultar una lista de niveles de dificultad, ver información detallada del nivel, revisar puntuaciones globales y jugar una ruleta que propone niveles aleatorios para completar.
+`FRAKA LIST` es una interfaz web estática pensada para explorar y consultar una lista de niveles de dificultad, ver información detallada del nivel, revisar puntuaciones globales y jugar una ruleta que propone niveles aleatorios para completar. Todo esto recopilado por records de la comunidad **Fraka clan**
 
 ## Cómo funciona
 
@@ -20,7 +20,7 @@ El archivo principal es:
 La interfaz tiene tres pestañas en la barra de navegación:
 
 1. **List**
-   - Muestra un listado de niveles disponibles.
+   - Muestra un listado de niveles disponibles los cuales son los records de la comunidad.
    - Permite seleccionar un nivel para ver su detalle, con información como creador, verificador, ID del nivel, puntos de lista, requisito mínimo y contraseña.
    - Inserta un video de verificación si la información del nivel incluye una URL de YouTube.
 
@@ -76,12 +76,3 @@ Ejemplos de campos que puede incluir un nivel:
 - El minijuego de ruleta usa `localStorage` para mantener el estado entre recargas.
 - El contenido visual se basa en estilos CSS definidos en `assets/css/`.
 
----
-
-### Recomendación
-
-Si deseas ampliar el proyecto, puedes agregar:
-
-- un `README` más detallado con ejemplos de JSON de nivel,
-- un script de carga de datos desde `data-lvl/` con un servidor local,
-- una página para editar niveles o subir nuevos datos.
