@@ -15,12 +15,12 @@ function switchTab(tabId, buttonElement) {
 async function inicializarSitio() {
     try {
         // A) Leer el índice maestro de niveles
-        const resListIndex = await fetch('/data-lvl/_list.json');
+        const resListIndex = await fetch('data-lvl/_list.json');
         const listaNombres = await resListIndex.json(); 
 
         const promesasNiveles = listaNombres.map(async (nombreArchivo, index) => {
             try {
-                const resNivel = await fetch(`/data-lvl/${nombreArchivo}.json`);
+                const resNivel = await fetch(`data-lvl/${nombreArchivo}.json`);
                 if (!resNivel.ok) throw new Error(`No se pudo cargar ${nombreArchivo}.json`);
                 const datosNivel = await resNivel.json();
                 
