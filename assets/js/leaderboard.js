@@ -67,49 +67,78 @@ export async function render(container) {
 
     const rankedPlayers = Object.values(playerRegistry).sort((a, b) => b.points - a.points);
 
+    const noPlayers = `<tr><td colspan="6" style="padding:30px;text-align:center;color:var(--text-secondary)">No se encontraron récords registrados.</td></tr>`;
+
+    const tableRows = rankedPlayers.map((player, idx) => {
+      let medal = `#${idx + 1}`;
+      if (idx === 0) medal = '🥇';
+      if (idx === 1) medal = '🥈';
+      if (idx === 2) medal = '🥉';
+      return `
+        <tr class="leaderboard-row">
+          <td class="lb-rank">${player.points.toFixed(1) && medal}</td>
+          <td class="lb-player">${player.name}</td>
+          <td class="lb-pts">${player.points.toFixed(1)} <span>PTS</span></td>
+          <td class="lb-center">${player.completions}</td>
+          <td class="lb-center">${player.listProgress}</td>
+          <td class="lb-right">
+            <span class="lb-hardest">${player.hardest.name}</span>
+            <span class="lb-hardest-rank"> (Top ${player.hardest.rank})</span>
+          </td>
+        </tr>`;
+    }).join('');
+
+    const playerCards = rankedPlayers.map((player, idx) => {
+      let medal = '#' + (idx + 1);
+      let medalClass = '';
+      if (idx === 0) { medal = '🥇'; medalClass = 'lb-card__rank--gold'; }
+      if (idx === 1) { medal = '🥈'; medalClass = 'lb-card__rank--silver'; }
+      if (idx === 2) { medal = '🥉'; medalClass = 'lb-card__rank--bronze'; }
+      return `
+        <div class="lb-card">
+          <div class="lb-card__rank ${medalClass}">${medal}</div>
+          <div class="lb-card__body">
+            <div class="lb-card__name">${player.name}</div>
+            <div class="lb-card__hardest">☠ ${player.hardest.name} <span>(Top ${player.hardest.rank})</span></div>
+            <div class="lb-card__stats">
+              <span><strong>${player.completions}</strong> completados</span>
+              <span class="lb-card__sep">·</span>
+              <span><strong>${player.listProgress}</strong> progresos</span>
+            </div>
+          </div>
+          <div class="lb-card__pts">${player.points.toFixed(1)}<span>PTS</span></div>
+        </div>`;
+    }).join('');
+
     container.innerHTML = `
-      <div class="page-header animate-fadeIn">
+      <div class="lb-page-header animate-fadeIn">
         <h1 class="page-title"><span>Leaderboard</span> Global</h1>
         <p class="page-subtitle">Puntuaciones y récords de la comunidad calculados automáticamente</p>
         <div class="page-title-bar"></div>
       </div>
 
-      <div class="table-container animate-fadeIn" style="max-width: 1000px; margin: 30px auto; overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: var(--font-ui);">
+      <!-- Tabla: visible solo en desktop -->
+      <div class="lb-table-wrap animate-fadeIn">
+        <table class="lb-table">
           <thead>
-            <tr style="border-bottom: 2px solid var(--accent-primary); color: var(--text-primary); font-size: 1.1rem;">
-              <th style="padding: 16px;">Rank</th>
-              <th style="padding: 16px;">Jugador</th>
-              <th style="padding: 16px;">Puntos Totales</th>
-              <th style="padding: 16px; text-align: center;">Completados</th>
-              <th style="padding: 16px; text-align: center;">Progresos</th>
-              <th style="padding: 16px; text-align: right;">Récord Más Difícil</th>
+            <tr>
+              <th class="lb-rank">Rank</th>
+              <th>Jugador</th>
+              <th>Puntos</th>
+              <th class="lb-center">Completados</th>
+              <th class="lb-center">Progresos</th>
+              <th class="lb-right">Hardest</th>
             </tr>
           </thead>
-          <tbody>
-            ${rankedPlayers.length === 0 
-              ? `<tr><td colspan="6" style="padding: 30px; text-align: center; color: var(--text-secondary);">No se encontraron récords registrados en el sistema.</td></tr>`
-              : rankedPlayers.map((player, idx) => {
-                  let medal = `#${idx + 1}`;
-                  if (idx === 0) medal = '🥇';
-                  if (idx === 1) medal = '🥈';
-                  if (idx === 2) medal = '🥉';
-
-                  return `
-                    <tr class="leaderboard-row" style="border-bottom: 1px solid var(--border-card); background: var(--bg-surface); transition: background 0.2s;">
-                      <td style="padding: 16px; font-weight: 700; font-size: 1.1rem; color: var(--accent-primary);">${medal}</td>
-                      <td style="padding: 16px; font-weight: 600; color: var(--text-primary);" class="player-name">${player.name}</td>
-                      <td style="padding: 16px; font-weight: 700; color: #fff; font-family: 'Orbitron', sans-serif;">${player.points.toFixed(1)} <span style="font-size: 0.8rem; color: var(--accent-primary);">PTS</span></td>
-                      <td style="padding: 16px; text-align: center; color: var(--text-primary);">${player.completions}</td>
-                      <td style="padding: 16px; text-align: center; color: var(--text-secondary);">${player.listProgress}</td>
-                      <td style="padding: 16px; text-align: right; font-size: 0.9rem; color: var(--accent-primary); font-style: italic;">
-                        ${player.hardest.name} <span style="color: var(--text-secondary); font-size: 0.8rem;">(Top ${player.hardest.rank})</span>
-                      </td>
-                    </tr>
-                  `;
-                }).join('')}
-          </tbody>
+          <tbody>${rankedPlayers.length === 0 ? noPlayers : tableRows}</tbody>
         </table>
+      </div>
+
+      <!-- Cards: visible solo en móvil -->
+      <div class="lb-cards animate-fadeIn">
+        ${rankedPlayers.length === 0
+          ? '<p style=\"text-align:center;color:var(--text-secondary);padding:var(--space-8)\">No se encontraron récords.</p>'
+          : playerCards}
       </div>
     `;
 
