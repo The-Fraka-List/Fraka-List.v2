@@ -10,10 +10,12 @@ Una página web con una lista de niveles estilo "demon list" con soporte para ve
 
 La página está construida con HTML, CSS y JavaScript puro. Los datos principales provienen de archivos JSON ubicados en `data-lvl/`, donde cada nivel tiene su propia definición.
 
-El archivo principal es:
+Los archivos principales son:
 
-- `index.html`: estructura de la página y tres secciones principales.
-- `main.js`: lógica de carga de datos, renderizado, navegación entre pestañas y funciones de la ruleta.
+- `index.html`: Estructura HTML, tres secciones principales (List, Leaderboard, Roulette) y contenedores para inyección dinámica.
+- `main.js`: Inicialización del sitio, carga de datos JSON, renderizado de listas y gestión de la navegación entre pestañas.
+- `assets/css/`: Sistema modular de estilos con variables CSS globales, componentes reutilizables y estilos específicos por sección.
+- `assets/js/`: Scripts adicionales para leaderboard dinámico, interfaz móvil y ajustes de UX.
 
 ## Página web
 
@@ -47,30 +49,54 @@ La interfaz tiene tres pestañas en la barra de navegación:
 
 ```
 index.html          # Página principal
-main.js             # Lógica de la aplicación
-assets/             # Estilos, scripts y recursos estáticos
-  css/              # Estilos del sitio
-  img/              # Imágenes utilizadas por la página
-  js/               # Scripts adicionales (por ejemplo, leaderboard)
-data/               # Carpeta vacía o para datos futuros
+main.js             # Lógica core: carga de datos, navegación y renderizado
+assets/
+  css/
+    variables.css   # Variables globales (colores, espacios, tipografía)
+    nav.css         # Estilos de la barra de navegación
+    components.css  # Componentes reutilizables (cards, botones, etc)
+    roulette.css    # Estilos específicos de la ruleta
+    mobile.css      # Estilos responsivos y adaptaciones móvil
+  img/              # Imágenes y assets visuales
+  js/
+    leaderboard.js  # Cálculo dinámico del ranking y puntos de jugadores
+    mobile-hamburger.js # Menú hamburguesa para dispositivos móviles
+    mobile-patch.js # Ajustes y parches para mejorar UX en móvil
 data-lvl/           # Niveles individuales en formato JSON
 ```
 
 ## Datos de niveles
 
-Cada nivel se describe en un archivo JSON dentro de `data-lvl/`. La página carga todos estos archivos al iniciar y genera el listado dinámicamente.
+Cada nivel se describe en un archivo JSON dentro de `data-lvl/`. El sistema funciona con un índice maestro (`_list.json`) que contiene la lista de archivos a cargar, permitiendo un control más flexible sobre el orden y qué niveles incluir.
+
+Cuando la página carga, `main.js` realiza lo siguiente:
+1. Fetch del archivo `_list.json` para obtener la lista de niveles
+2. Carga asincrónica de todos los archivos JSON de niveles
+3. Asignación automática de rank según el orden en la lista
+4. Renderizado del sidebar y cálculo del leaderboard
 
 Ejemplos de campos que puede incluir un nivel:
 
-- `id`
-- `name`
-- `rank`
-- `percentToQualify`
-- `verification` (URL de video)
-- `creators`
-- `verifier`
-- `password`
-- `records`
+- `id` - Identificador único del nivel
+- `name` - Nombre del nivel
+- `rank` - Posición en la lista (asignada automáticamente)
+- `percentToQualify` - Porcentaje mínimo para clasificar
+- `verification` - URL de video de verificación (YouTube)
+- `creators` - Lista de creadores del nivel
+- `verifier` - Jugador que verificó el nivel
+- `password` - Contraseña para ingresar al nivel
+- `records` - Array de jugadores que han completado el nivel con datos de progreso
+
+## Soporte responsivo
+
+La aplicación está diseñada para funcionar en dispositivos móviles y de escritorio. El sistema responsivo incluye:
+
+- **Menú hamburguesa** - En dispositivos móviles, la navegación se convierte en un menú desplegable
+- **Layouts adaptables** - La interfaz se reorganiza automáticamente según el tamaño de pantalla
+- **Sistema de variables CSS** - `variables.css` define espacios, colores y tipografía escalables
+- **Componentes optimizados** - Tarjetas, botones y elementos se redimensionan para pantallas pequeñas
+
+Los scripts `mobile-hamburger.js` y `mobile-patch.js` se encargan de inyectar la interfaz móvil y manejar ajustes específicos para una mejor experiencia en teléfonos y tablets.
 
 ## Uso local
 
@@ -81,7 +107,10 @@ Ejemplos de campos que puede incluir un nivel:
 
 ## Notas
 
-- La navegación entre pestañas se realiza con botones que activan/desactivan secciones.
-- El minijuego de ruleta usa `localStorage` para mantener el estado entre recargas.
-- El contenido visual se basa en estilos CSS definidos en `assets/css/`.
+- La navegación entre pestañas se realiza con botones que activan/desactivan secciones mediante JavaScript.
+- El **leaderboard** calcula dinámicamente los puntos de cada jugador basándose en la dificultad del nivel y la posición en el ranking.
+- El minijuego de **ruleta** usa `localStorage` para mantener el estado entre recargas, permitiendo al usuario retomar su progreso.
+- El sistema utiliza **variables CSS** (`variables.css`) para mantener consistencia visual y permitir cambios globales de tema sin modificar múltiples archivos.
+- Los datos se cargan de forma **asincrónica** usando `fetch()` para evitar bloqueos en la interfaz durante la carga de múltiples archivos JSON.
+- El sitio es **completamente estático** - no requiere backend, ideal para hospedaje en GitHub Pages u otros servicios de hosting estático.
 
