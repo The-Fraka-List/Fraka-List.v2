@@ -14,7 +14,6 @@ function switchTab(tabId, buttonElement) {
 
 async function inicializarSitio() {
     try {
-        // A) Leer el índice maestro de niveles
         const resListIndex = await fetch('data-lvl/_list.json');
         const listaNombres = await resListIndex.json(); 
 
@@ -173,6 +172,170 @@ function mostrarDetallesNivel(idNivel) {
     `;
 }
 
+function openPlayerModal(playerData) {
+    const modal = document.getElementById('player-modal');
+    const modalContent = document.getElementById('player-modal-content');
+
+    const medalClass = playerData.rank === 1 ? 'text-gold' : playerData.rank === 2 ? 'text-silver' : playerData.rank === 3 ? 'text-bronze' : 'text-accent';
+    
+    modalContent.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-4);">
+            <div>
+                <div class="text-mono ${medalClass}" style="font-size: 1.2rem; font-weight: 700; margin-bottom: var(--space-1);">
+                    ${playerData.rank === 1 ? '🥇' : playerData.rank === 2 ? '🥈' : playerData.rank === 3 ? '🥉' : ''} #${playerData.rank}
+                </div>
+                <h2 class="text-display" style="font-size: 1.8rem; margin: 0; font-weight: 700; color: var(--text-primary);">${playerData.name}</h2>
+            </div>
+            <button onclick="closePlayerModal()" class="player-modal-close" style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-secondary); cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); font-size: 1.2rem;">×</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-bottom: var(--space-6);">
+            <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-2);">Puntos Totales</div>
+                <div class="text-mono" style="font-size: 1.3rem; font-weight: 700; color: var(--accent-light);">${playerData.points.toFixed(1)}</div>
+            </div>
+            <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-2);">Completados</div>
+                <div class="text-mono" style="font-size: 1.3rem; font-weight: 700; color: var(--accent-light);">${playerData.completions}</div>
+            </div>
+            <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-2);">En Progreso</div>
+                <div class="text-mono" style="font-size: 1.3rem; font-weight: 700; color: var(--accent-light);">${playerData.listProgress}</div>
+            </div>
+            <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-2);">Hardest</div>
+                <div style="font-size: 0.9rem; color: var(--text-primary); font-weight: 600;">${playerData.hardest.name}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">(Top ${playerData.hardest.rank})</div>
+            </div>
+        </div>
+        
+        <div style="margin-top:var(--space-4);">
+            <button
+                onclick="showCompletedLevels('${playerData.name}')"
+                style="
+                    width:100%;
+                    padding:12px;
+                    background:var(--accent);
+                    border:none;
+                    border-radius:var(--radius-md);
+                    color:white;
+                    font-weight:700;
+                    cursor:pointer;
+                "
+            >
+                Ver completados (${playerData.completions})
+            </button>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closePlayerModal() {
+    const modal = document.getElementById('player-modal');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function showCompletedLevels(playerName) {
+
+    const player = window.leaderboardPlayers.find(
+        p => p.name === playerName
+    );
+
+    if (!player) return;
+
+    let html = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h2 style="margin:0;">Completados de ${player.name}</h2>
+
+            <button onclick="closePlayerModal()"
+                style="
+                    width:32px;
+                    height:32px;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                ">
+                ×
+            </button>
+        </div>
+    `;
+
+    if (!player.completedLevels.length) {
+
+        html += `
+            <p style="color:var(--text-muted);">
+                Este jugador todavía no tiene completados.
+            </p>
+        `;
+
+    } else {
+
+        html += `<div style="display:flex;flex-direction:column;gap:10px;">`;
+
+        player.completedLevels
+            .sort((a,b) => a.rank - b.rank)
+            .forEach(level => {
+
+                html += `
+                    <div style="
+                        background:var(--bg-base);
+                        border:1px solid var(--border);
+                        padding:12px;
+                        border-radius:10px;
+                    ">
+
+                        <div style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            gap:10px;
+                        ">
+
+                            <div>
+                                <div style="font-weight:700;">
+                                    ${level.level}
+                                </div>
+
+                                <div style="
+                                    font-size:0.8rem;
+                                    color:var(--text-muted);
+                                ">
+                                    Top ${level.rank}
+                                </div>
+                            </div>
+
+                            ${
+                                level.video
+                                ? `
+                                    <a
+                                        href="${level.video}"
+                                        target="_blank"
+                                        style="
+                                            color:var(--accent-light);
+                                            text-decoration:none;
+                                            font-weight:700;
+                                        "
+                                    >
+                                        Video ↗
+                                    </a>
+                                `
+                                : ''
+                            }
+
+                        </div>
+                    </div>
+                `;
+            });
+
+        html += `</div>`;
+    }
+
+    document.getElementById('player-modal-content').innerHTML = html;
+}
+
 function renderLeaderboard() {
     const container = document.getElementById('leaderboard-container');
     if (!container) return;
@@ -204,7 +367,9 @@ function renderLeaderboard() {
                     points: 0,
                     completions: 0,
                     listProgress: 0,
-                    hardest: { name: nivel.name, rank: topPosition }
+                    hardest: { name: nivel.name, rank: topPosition },
+                    completedLevels: [],
+                    progressLevels: []
                 };
             }
 
@@ -213,10 +378,20 @@ function renderLeaderboard() {
             if (record.percent === 100) {
                 p.points += maxLevelPoints;
                 p.completions += 1;
+                p.completedLevels.push({
+                    level: nivel.name,
+                    rank: nivel.rank,
+                    video: record.link || null
+                });
             } else if (record.percent >= parseInt(nivel.percentToQualify || 50)) {
                 const progressScore = maxLevelPoints * (record.percent / 100) * 0.4;
                 p.points += Math.round(progressScore * 10) / 10;
                 p.listProgress += 1;
+                p.progressLevels.push({
+                    level: nivel.name,
+                    percent: record.percent,
+                    video: record.link || null
+                });
             }
 
             if (record.percent === 100 && topPosition < p.hardest.rank) {
@@ -236,20 +411,36 @@ function renderLeaderboard() {
         return;
     }
 
+    window.leaderboardPlayers = rankedPlayers;
+
+    let htmlMobile = `<div class="leaderboard-mobile">`;
+    rankedPlayers.forEach((player, idx) => {
+        const rank = idx + 1;
+        htmlMobile += `
+            <div class="leaderboard-mobile-row" onclick="openPlayerModal(window.leaderboardPlayers[${idx}])">
+                <div class="leaderboard-mobile-rank">#${rank}</div>
+                <div class="leaderboard-mobile-name">${player.name}</div>
+                <div class="leaderboard-mobile-arrow">→</div>
+            </div>
+        `;
+    });
+    htmlMobile += `</div>`;
+
     let htmlTable = `
-        <div style="overflow-x: auto; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
-                <thead>
-                    <tr style="background: var(--bg-elevated); border-bottom: 1px solid var(--border);">
-                        <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em;">Puesto</th>
-                        <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em;">Jugador</th>
-                        <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em;">Puntos Totales</th>
-                        <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; text-align: center;">Completados</th>
-                        <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; text-align: center;">Progresos</th>
-                        <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em;">Récord Más Difícil</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <div class="leaderboard-desktop">
+            <div style="overflow-x: auto; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+                    <thead>
+                        <tr style="background: var(--bg-elevated); border-bottom: 1px solid var(--border);">
+                            <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em;">Puesto</th>
+                            <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em;">Jugador</th>
+                            <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em;">Puntos Totales</th>
+                            <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; text-align: center;">Completados</th>
+                            <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; text-align: center;">Progresos</th>
+                            <th style="padding: var(--space-4); font-family: var(--font-display); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em;">Hardest</th>
+                        </tr>
+                    </thead>
+                    <tbody>
     `;
 
     rankedPlayers.forEach((player, idx) => {
@@ -259,7 +450,9 @@ function renderLeaderboard() {
         if (idx === 2) medal = '#3';
 
         htmlTable += `
-            <tr style="border-bottom: 1px solid var(--border); transition: background var(--transition-fast);"
+            <tr
+                onclick='openPlayerModal(window.leaderboardPlayers[${idx}])'
+                style="border-bottom: 1px solid var(--border); transition: background var(--transition-fast); cursor: pointer;"
                 onmouseover="this.style.background='var(--bg-elevated)'"
                 onmouseout="this.style.background='transparent'">
                 <td class="text-mono" style="padding: var(--space-4); font-weight: 700; font-size: 1.1rem; color: var(--accent-light);">${medal}</td>
@@ -277,8 +470,9 @@ function renderLeaderboard() {
         `;
     });
 
-    htmlTable += `</tbody></table></div>`;
-    container.innerHTML = htmlTable;
+    htmlTable += `</tbody></table></div></div>`;
+
+    container.innerHTML = htmlMobile + htmlTable;
 }
 
 const roulette = {
