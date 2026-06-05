@@ -1,0 +1,19 @@
+{
+    "id": 52289646,
+    "name": "Tesseract",
+    "author": "iiLuna",
+    "creators": ["CJGamer and more"],
+    "verifier": "Kepta_bb",
+    "verification": "https://www.youtube.com/watch?v=6eDOuGkY8OM",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+
+            "user": "Kepta_bb",
+            "link": "https://www.youtube.com/watch?v=6eDOuGkY8OM",
+            "percent": 100,
+            "hz": 144
+        }
+    ]
+}
