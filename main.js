@@ -1,6 +1,28 @@
 let globalLevels = [];
 let globalLeaderboard = [];
 
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.createElement('div');
+        toast.className = 'copy-toast';
+        toast.textContent = 'Copiado';
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300);
+        }, 1500);
+    }).catch(err => {
+        console.error('Error al copiar:', err);
+    });
+}
+
 function switchTab(tabId, buttonElement) {
     document.querySelectorAll('.main-content').forEach(section => {
         section.classList.remove('active');
@@ -14,6 +36,7 @@ function switchTab(tabId, buttonElement) {
 
 async function inicializarSitio() {
     try {
+        // A) Leer el índice maestro de niveles
         const resListIndex = await fetch('data-lvl/_list.json');
         const listaNombres = await resListIndex.json(); 
 
@@ -37,6 +60,14 @@ async function inicializarSitio() {
         renderLeaderboard();
 
         renderSidebar();
+
+        const searchInput = document.getElementById('level-search');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                filterLevels(e.target.value);
+            });
+        }
 
         if (globalLevels.length > 0) {
             mostrarDetallesNivel(globalLevels[0].id);
@@ -71,6 +102,52 @@ function renderSidebar() {
                 <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">por ${nivel.author || nivel.creators[0]}</div>
             </div>
         `;
+        sidebar.appendChild(item);
+    });
+}
+
+function filterLevels(searchTerm) {
+    const sidebar = document.getElementById('levels-sidebar');
+
+    sidebar.innerHTML = '';
+
+    const filteredLevels = globalLevels.filter(level =>
+        level.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    filteredLevels.forEach(nivel => {
+        const item = document.createElement('div');
+
+        item.className = 'card level-card';
+        item.id = `sidebar-item-${nivel.id}`;
+
+        item.style.marginBottom = 'var(--space-3)';
+        item.style.cursor = 'pointer';
+        item.style.display = 'flex';
+        item.style.alignItems = 'center';
+        item.style.gap = 'var(--space-4)';
+        item.style.padding = 'var(--space-4)';
+
+        item.onclick = () => mostrarDetallesNivel(nivel.id);
+
+        item.innerHTML = `
+            <div class="text-accent text-mono"
+                 style="font-size:1.3rem;font-weight:700;min-width:45px;">
+                 #${nivel.rank}
+            </div>
+
+            <div style="flex:1;">
+                <div class="text-display"
+                     style="font-weight:600;font-size:1.15rem;color:var(--text-primary);line-height:1.2;">
+                     ${nivel.name}
+                </div>
+
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-top:2px;">
+                    por ${nivel.author || nivel.creators[0]}
+                </div>
+            </div>
+        `;
+
         sidebar.appendChild(item);
     });
 }
@@ -146,9 +223,9 @@ function mostrarDetallesNivel(idNivel) {
             `}
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6);">
-                <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
+                <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center; cursor: pointer; transition: all var(--transition-fast);" onclick="copyToClipboard('${nivel.id}'); this.style.background='var(--bg-elevated)'; setTimeout(() => this.style.background='var(--bg-base)', 200);">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">ID del Nivel</div>
-                    <div class="text-mono" style="font-size: 1.1rem; font-weight: bold; margin-top: 4px;">${nivel.id}</div>
+                    <div class="text-mono" style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--accent-light);">${nivel.id}</div>
                 </div>
                 <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Puntos de Lista</div>
@@ -157,10 +234,6 @@ function mostrarDetallesNivel(idNivel) {
                 <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Requisito Mín.</div>
                     <div class="text-mono" style="font-size: 1.1rem; font-weight: bold; margin-top: 4px;">${nivel.percentToQualify}%</div>
-                </div>
-                <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
-                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Contraseña (Copy)</div>
-                    <div class="text-mono" style="font-size: 0.95rem; font-weight: bold; margin-top: 6px; color: var(--text-secondary);">${nivel.password || 'No Copy'}</div>
                 </div>
             </div>
 
