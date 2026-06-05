@@ -50,9 +50,9 @@
     const backBtn = document.createElement('button');
     backBtn.id = 'mobile-back-btn';
     backBtn.setAttribute('aria-label', 'Volver a la lista');
-    backBtn.innerHTML = '&#x2715;'; 
+    backBtn.innerHTML = '&#x2715;';
     backBtn.addEventListener('click', showSidebar);
-    document.body.appendChild(backBtn); 
+    document.body.appendChild(backBtn);
 
     function showDetail() {
         if (!isMobile()) return;
