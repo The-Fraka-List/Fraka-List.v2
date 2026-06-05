@@ -80,8 +80,6 @@
 }
 
 
-
-
 #mobile-back-btn {
     display: none;
     position: fixed;
@@ -154,7 +152,6 @@
 .lb-table .lb-right  { text-align: right; }
 .lb-table .lb-hardest { font-size: 0.88rem; color: var(--accent-light); font-style: italic; }
 .lb-table .lb-hardest-rank { color: var(--text-secondary); font-size: 0.78rem; }
-
 
 
 
@@ -269,6 +266,7 @@
     #level-details.mobile-active   { display: block !important; }
     #mobile-back-btn.visible       { display: flex; }
 
+    /* Roulette */
     #tab-roulette { height: auto !important; overflow: visible !important; }
     .roulette-layout {
         display: flex !important;
@@ -299,6 +297,15 @@
     #level-details h1 { font-size: 1.6rem !important; }
     .level-card:hover { transform: none !important; }
     .btn { min-height: 38px; min-width: 44px; }
+
+    .level-search-container {
+        margin-bottom: 10px;
+    }
+
+    .level-search-input {
+        width: 100%;
+        font-size: 16px;
+    }
 
     .lb-table-wrap { display: none !important; }
     .lb-cards {
@@ -399,8 +406,6 @@
         font-weight: 400;
     }
 }
-
-
 
 
 @media (max-width: 480px) {
