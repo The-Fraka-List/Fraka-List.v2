@@ -116,7 +116,20 @@
         
         <section id="tab-list" class="main-content active">
             <div class="list-layout">
-                <div class="sidebar-list" id="levels-sidebar"></div>
+                <div class="sidebar-list-wrapper">
+
+                    <div class="level-search-container">
+                        <input
+                            type="text"
+                            id="level-search"
+                            placeholder="Buscar nivel..."
+                            class="level-search-input"
+                        >
+                    </div>
+
+                    <div class="sidebar-list" id="levels-sidebar"></div>
+
+                </div>
                 
                 <div class="level-detail-panel" id="level-details"></div>
             </div>
