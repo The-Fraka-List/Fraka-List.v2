@@ -103,6 +103,7 @@
                 <button class="nav__link-btn active" onclick="switchTab('tab-list', this)">List</button>
                 <button class="nav__link-btn" onclick="switchTab('tab-leaderboard', this)">Leaderboard</button>
                 <button class="nav__link-btn" onclick="switchTab('tab-roulette', this)">Roulette</button>
+                <button class="nav__link-btn" onclick="switchTab('tab-frk-dm', this)">FRK-DM</button>
             </div>
             
             <div style="display: flex; gap: var(--space-3); align-items: center;">
@@ -191,14 +192,19 @@
             </div>
         </section>
 
+        <section id="tab-frk-dm" class="main-content">
+        </section>
+
     </main>
 
+    <!-- Player Modal -->
     <div id="player-modal" class="player-modal" onclick="if(event.target === this) closePlayerModal()">
         <div class="player-modal-content-wrapper">
             <div id="player-modal-content" class="player-modal-content"></div>
         </div>
     </div>
 
+    <script src="assets/js/frk-dm.js"></script>
     <script src="main.js"></script>
     <script src="assets/js/mobile-hamburger.js"></script>
 </body>
