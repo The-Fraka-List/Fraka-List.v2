@@ -11,6 +11,7 @@
         <button class="nav__link-btn active" data-tab="tab-list">List</button>
         <button class="nav__link-btn" data-tab="tab-leaderboard">Leaderboard</button>
         <button class="nav__link-btn" data-tab="tab-roulette">Roulette</button>
+        <button class="nav__link-btn" data-tab="tab-frk-dm">FRK-DM</button>
         <div class="nav__mobile-actions">
             <a href="https://discord.gg/5Ht99YYBwn" target="_blank" class="btn"
                style="background:#5865F2;border:1px solid #5865F2;color:white;font-family:var(--font-mono);font-weight:bold;text-decoration:none;">
@@ -50,9 +51,9 @@
     const backBtn = document.createElement('button');
     backBtn.id = 'mobile-back-btn';
     backBtn.setAttribute('aria-label', 'Volver a la lista');
-    backBtn.innerHTML = '&#x2715;';
+    backBtn.innerHTML = '&#x2715;'; 
     backBtn.addEventListener('click', showSidebar);
-    document.body.appendChild(backBtn);
+    document.body.appendChild(backBtn); 
 
     function showDetail() {
         if (!isMobile()) return;
