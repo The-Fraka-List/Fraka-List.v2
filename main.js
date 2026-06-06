@@ -73,6 +73,9 @@ async function inicializarSitio() {
             mostrarDetallesNivel(globalLevels[0].id);
         }
 
+        // Inicializar la sección FRK-DM
+        await inicializarFrkDm();
+
     } catch (error) {
         console.error("Error crítico al inicializar la estructura dinámica data-lvl:", error);
     }
@@ -484,8 +487,10 @@ function renderLeaderboard() {
         return;
     }
 
+    // Store players globally for modal
     window.leaderboardPlayers = rankedPlayers;
 
+    // MOBILE VERSION
     let htmlMobile = `<div class="leaderboard-mobile">`;
     rankedPlayers.forEach((player, idx) => {
         const rank = idx + 1;
@@ -499,6 +504,7 @@ function renderLeaderboard() {
     });
     htmlMobile += `</div>`;
 
+    // DESKTOP VERSION
     let htmlTable = `
         <div class="leaderboard-desktop">
             <div style="overflow-x: auto; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
