@@ -80,6 +80,7 @@
 }
 
 
+
 #mobile-back-btn {
     display: none;
     position: fixed;
@@ -152,6 +153,7 @@
 .lb-table .lb-right  { text-align: right; }
 .lb-table .lb-hardest { font-size: 0.88rem; color: var(--accent-light); font-style: italic; }
 .lb-table .lb-hardest-rank { color: var(--text-secondary); font-size: 0.78rem; }
+
 
 
 
@@ -266,7 +268,6 @@
     #level-details.mobile-active   { display: block !important; }
     #mobile-back-btn.visible       { display: flex; }
 
-    /* Roulette */
     #tab-roulette { height: auto !important; overflow: visible !important; }
     .roulette-layout {
         display: flex !important;
@@ -408,6 +409,8 @@
 }
 
 
+
+
 @media (max-width: 480px) {
     :root { --nav-height: 60px; }
     .nav__logo span { font-size: 1.1rem !important; }
@@ -417,4 +420,117 @@
     .lb-card { padding: var(--space-2) var(--space-3); gap: var(--space-2); }
     .lb-card__name { font-size: var(--font-sm); }
     .lb-card__pts  { font-size: var(--font-sm); }
+}
+
+
+
+@media (max-width: 768px) {
+    #tab-frk-dm {
+        height: auto !important;
+        overflow: visible !important;
+        overflow-y: auto !important;
+        padding-top: calc(var(--nav-height) + var(--space-4)) !important;
+        padding-right: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    .fdm-detail__close-btn {
+        top: calc(var(--nav-height) + var(--space-3));
+        right: var(--space-3);
+        width: 40px;
+        height: 40px;
+        font-size: 1.6rem;
+        z-index: 997;
+        box-shadow: var(--shadow-md);
+    }
+
+    .fdm-layout {
+        grid-template-columns: 1fr;
+        padding: var(--space-3);
+        gap: var(--space-3);
+        display: grid;
+    }
+    .fdm-layout.mobile-hidden {
+        display: none !important;
+    }
+
+    .fdm-card {
+        width: 100%;
+    }
+    .fdm-card__banner {
+        height: 180px;
+        object-fit: cover;
+    }
+    .fdm-card__title {
+        font-size: 1.1rem;
+        margin-top: var(--space-2);
+    }
+
+    .fdm-detail {
+        padding: 0;
+        width: 100%;
+        display: block; 
+    }
+
+    .fdm-detail__header {
+        padding: var(--space-4) var(--space-3) var(--space-3);
+    }
+
+    .fdm-detail__title {
+        font-size: 1.5rem;
+        margin-top: var(--space-3);
+    }
+
+    .fdm-detail__banner {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .fdm-detail__body {
+        grid-template-columns: 1fr;
+        padding: var(--space-3);
+        gap: var(--space-4);
+    }
+
+    .fdm-detail__votes-container,
+    .fdm-detail__video-container {
+        padding: 0;
+    }
+
+    .fdm-detail__votes-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    #tab-frk-dm {
+        padding-top: calc(var(--nav-height) + var(--space-3)) !important;
+    }
+
+    .fdm-layout {
+        padding: var(--space-2);
+        gap: var(--space-2);
+    }
+
+    .fdm-card__banner {
+        height: 140px;
+    }
+
+    .fdm-card__title {
+        font-size: 1rem;
+    }
+
+    .fdm-detail__title {
+        font-size: 1.3rem;
+    }
+
+    .fdm-detail__banner {
+        height: 160px;
+    }
+
+    .fdm-detail__close-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.4rem;
+    }
 }
