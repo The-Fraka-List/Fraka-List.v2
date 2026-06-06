@@ -123,7 +123,6 @@
     color: var(--text-muted);
 }
 
-/* --- Toasts --- */
 #roulette-toasts {
     display: flex;
     flex-direction: column;
