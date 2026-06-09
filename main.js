@@ -816,5 +816,30 @@ function rouletteToggleRemaining() {
     animate();
 })();
 
+// ── Easter Egg: moment.ogg (2% de probabilidad global) ──────────────────
+(function initEasterEgg() {
+    const audio = new Audio('assets/img/moment.ogg');
+    audio.preload = 'auto';
+
+    function maybePlay() {
+        if (Math.random() < 0.02) {
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+        }
+    }
+
+    // Captura clicks/taps en cualquier elemento interactuable
+    document.addEventListener('click', (e) => {
+        const el = e.target.closest('button, a, [onclick], input[type="button"], input[type="submit"], label, [role="button"], [tabindex]');
+        if (el) maybePlay();
+    }, true);
+
+    // Soporte móvil táctil
+    document.addEventListener('touchend', (e) => {
+        const el = e.target.closest('button, a, [onclick], input[type="button"], input[type="submit"], label, [role="button"], [tabindex]');
+        if (el) maybePlay();
+    }, true);
+})();
+
 inicializarSitio();
 document.addEventListener('DOMContentLoaded', rouletteInit);
