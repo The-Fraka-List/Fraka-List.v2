@@ -249,6 +249,12 @@ function mostrarDetallesNivel(idNivel) {
 }
 
 function openPlayerModal(playerData) {
+    // ── Easter Egg: TheGlaiCat audio (45% de probabilidad) ──
+    if (playerData.name.trim().toLowerCase() === 'theglaicat' && Math.random() < 0.45) {
+        const _cata = new Audio('assets/img/cata.mp3');
+        _cata.play().catch(() => {});
+    }
+
     const modal = document.getElementById('player-modal');
     const modalContent = document.getElementById('player-modal-content');
 
