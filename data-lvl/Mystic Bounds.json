@@ -8,5 +8,12 @@
     "percentToQualify": "100",
     "password": "180823",
     "records": [
+        {
+
+            "user": "Gilberto_Dash",
+            "link": "https://www.youtube.com/watch?v=uAVPB3-bJLk",
+            "percent": 100,
+            "hz": 120
+        }
     ]
 }
