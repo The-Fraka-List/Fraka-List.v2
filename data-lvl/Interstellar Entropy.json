@@ -2,17 +2,30 @@
     "id": 68578147,
     "name": "Interstellar Entropy",
     "author": "LastPrismAlex",
-    "creators": ["LastPrismAlex, maelstrom, Punnchito, Unbipentium, Chars806, Terrors, Monstruay, Astrofox, Raff, Valdo, GDLogic, Novag_x, notisa, eMastres, Isfy, Yucan and Gots"],
+    "creators": ["LastPrismAlex, maelstrom, Punnchito and more"],
     "verifier": "TheGlaiCat",
     "verification": "https://www.youtube.com/watch?v=-PnP1ohUns0",
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
         {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=-PnP1ohUns0",
+            "percent": 100,
+            "hz": 120
+        },
+        {
             "user": "Toxic",
             "link": "https://www.youtube.com/watch?v=bbN4PJHO_NE",
             "percent": 100,
             "hz": 240
+        },
+        {
+
+            "user": "Gilberto_Dash",
+            "link": "https://www.youtube.com/watch?v=_QRfLsfu35o",
+            "percent": 100,
+            "hz": 120
         }
     ]
 }
