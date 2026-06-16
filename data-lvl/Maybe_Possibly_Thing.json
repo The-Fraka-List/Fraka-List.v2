@@ -9,10 +9,23 @@
     "password": "Free To Copy",
     "records": [
         {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=eTVrGuG3vHY",
+            "percent": 100,
+            "hz": 120
+        },
+        {
             "user": "AleezCourtz",
             "link": "https://www.youtube.com/watch?v=u8uKNt5yyHQ",
             "percent": 100,
             "hz": 60
+        },
+        {
+
+            "user": "Gilberto_Dash",
+            "link": "https://www.youtube.com/watch?v=uOfdJAWvwcI",
+            "percent": 100,
+            "hz": 120
         }
     ]
 }
