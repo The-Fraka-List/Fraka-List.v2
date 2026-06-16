@@ -9,6 +9,12 @@
     "password": "Free To Copy",
     "records": [
         {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=qMHNJVJ8rG8",
+            "percent": 100,
+            "hz": 120
+        },
+        {
             "user": "TheGlaiCat",
             "link": "https://www.youtube.com/watch?v=2G-M5LjueDQ",
             "percent": 100,
@@ -17,6 +23,13 @@
         {
             "user": "xReizer",
             "link": "https://youtu.be/0RwOE9TxlpI?si=MGMdokXPzDsbjVoN",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+
+            "user": "Gilberto_Dash",
+            "link": "https://www.youtube.com/watch?v=_QRfLsfu35o",
             "percent": 100,
             "hz": 120
         }
