@@ -1,5 +1,5 @@
 {
-    "id": 97183213,
+    "id": 83825373,
     "name": "Overtime",
     "author": "KlaurosssS",
     "creators": ["KlaurosssS, LaserSword33, ISSLOL, Retro Head, Airtime [GD], WaRiox, Ellisha, Ji, AbysS, Hir0shi, UltraS4, Vyzionr, Zary_"],
@@ -25,6 +25,12 @@
             "link": "https://www.youtube.com/watch?v=dnbcenBECtY",
             "percent": 100,
             "hz": 60
+        },
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=MgzF_udTtks",
+            "percent": 100,
+            "hz": 120
         }
     ]
 }
