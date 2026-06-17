@@ -92,6 +92,15 @@
 </head>
 <body>
 
+    <div id="bug-tab" class="bug-tab">
+        <button id="bug-tab-handle" class="bug-tab__handle" onclick="toggleBugTab()">⚠ Bugs</button>
+        <div class="bug-tab__panel">
+            <h3 class="bug-tab__title">Bugs encontrados</h3>
+            <p class="bug-tab__desc">ID duplicadas, mal escrito, código mal ejecutado.</p>
+            <ul id="bug-tab-list" class="bug-tab__list"></ul>
+        </div>
+    </div>
+
     <header class="nav">
         <div class="nav__inner">
             <div class="nav__logo">
