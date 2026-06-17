@@ -51,9 +51,11 @@ async function inicializarSitio() {
                 if (!datosNivel.id || !datosNivel.name) {
                     bugs.push({
                         file: `${nombreArchivo}.json`,
-                        reason: 'Archivo mal escrito (falta "id" o "name").'
+                        reason: 'Falta "id" o "name" en el archivo (se usaron valores de respaldo para la leaderboard).'
                     });
-                    return null;
+    // Asignamos datos mínimos de respaldo para que la leaderboard pueda leer los récords sin romperse
+                    if (!datosNivel.id) datosNivel.id = `id_${nombreArchivo}`;
+                    if (!datosNivel.name) datosNivel.name = nombreArchivo;
                 }
 
                 datosNivel.rank = index + 1;
@@ -491,64 +493,57 @@ function renderLeaderboard() {
 
     const playerRegistry = {};
 
-    globalLevels.forEach(nivel => {
-        if (!nivel.records || !Array.isArray(nivel.records)) return;
+globalLevels.forEach(nivel => {
+    if (!nivel || !nivel.records || !Array.isArray(nivel.records)) return;
 
-        const topPosition = nivel.rank;
-        const maxLevelPoints = Math.max(50, 250 - (topPosition * 3));
+    const topPosition = nivel.rank;
+    const maxLevelPoints = Math.max(50, 250 - (topPosition * 3));
+    
+    const nombreNivelSeguro = nivel.name || "Nivel Desconocido";
 
-        const excluidos = new Set();
-        if (nivel.verifier) excluidos.add(nivel.verifier.trim().toLowerCase());
-        if (nivel.author)   excluidos.add(nivel.author.trim().toLowerCase());
-        if (nivel.creators && Array.isArray(nivel.creators)) {
-            nivel.creators.forEach(c => excluidos.add(c.trim().toLowerCase()));
+    nivel.records.forEach(record => {
+        const username = record.user ? record.user.trim() : '';
+        if (!username) return;
+
+        if (!playerRegistry[username]) {
+            playerRegistry[username] = {
+                name: username,
+                points: 0,
+                completions: 0,
+                listProgress: 0,
+                hardest: { name: nombreNivelSeguro, rank: topPosition },
+                completedLevels: [],
+                progressLevels: []
+            };
         }
 
-        nivel.records.forEach(record => {
-            const username = record.user ? record.user.trim() : '';
-            if (!username) return;
+        const p = playerRegistry[username];
 
-            if (excluidos.has(username.toLowerCase())) return;
+        if (record.percent === 100) {
+            p.points += maxLevelPoints;
+            p.completions += 1;
+            p.completedLevels.push({
+                level: nombreNivelSeguro,
+                rank: nivel.rank,
+                video: record.link || null
+            });
+        } else if (record.percent >= parseInt(nivel.percentToQualify || 50)) {
+            const progressScore = maxLevelPoints * (record.percent / 100) * 0.4;
+            p.points += Math.round(progressScore * 10) / 10;
+            p.listProgress += 1;
+            p.progressLevels.push({
+                level: nombreNivelSeguro,
+                percent: record.percent,
+                video: record.link || null
+            });
+        }
 
-            if (!playerRegistry[username]) {
-                playerRegistry[username] = {
-                    name: username,
-                    points: 0,
-                    completions: 0,
-                    listProgress: 0,
-                    hardest: { name: nivel.name, rank: topPosition },
-                    completedLevels: [],
-                    progressLevels: []
-                };
-            }
-
-            const p = playerRegistry[username];
-
-            if (record.percent === 100) {
-                p.points += maxLevelPoints;
-                p.completions += 1;
-                p.completedLevels.push({
-                    level: nivel.name,
-                    rank: nivel.rank,
-                    video: record.link || null
-                });
-            } else if (record.percent >= parseInt(nivel.percentToQualify || 50)) {
-                const progressScore = maxLevelPoints * (record.percent / 100) * 0.4;
-                p.points += Math.round(progressScore * 10) / 10;
-                p.listProgress += 1;
-                p.progressLevels.push({
-                    level: nivel.name,
-                    percent: record.percent,
-                    video: record.link || null
-                });
-            }
-
-            if (record.percent === 100 && topPosition < p.hardest.rank) {
-                p.hardest.name = nivel.name;
-                p.hardest.rank = topPosition;
-            }
-        });
+        if (record.percent === 100 && topPosition < p.hardest.rank) {
+            p.hardest.name = nombreNivelSeguro;
+            p.hardest.rank = topPosition;
+        }
     });
+});
 
     const rankedPlayers = Object.values(playerRegistry).sort((a, b) => b.points - a.points);
 
