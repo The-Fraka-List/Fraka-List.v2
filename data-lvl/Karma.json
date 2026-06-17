@@ -1,5 +1,5 @@
 {
-    "id": 97183213,
+    "id": 63471387,
     "name": "Karma",
     "author": "Artu",
     "creators": ["Artu, Marwec"],
@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=DTI1lJ5uGPs",
+            "percent": 100,
+            "hz": 120
+        }
     ]
 }
