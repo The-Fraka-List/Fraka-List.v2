@@ -1,5 +1,5 @@
 {
-    "id": 97183213,
+    "id": 129561693,
     "name": "Carbon Fiber",
     "author": "xSlendy",
     "creators": ["xSlendy"],
@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=LBvZNj3MB7g",
+            "percent": 100,
+            "hz": 120
+        }
     ]
 }
