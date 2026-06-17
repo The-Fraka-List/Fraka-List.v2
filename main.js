@@ -114,9 +114,16 @@ function filterLevels(searchTerm) {
 
     sidebar.innerHTML = '';
 
-    const filteredLevels = globalLevels.filter(level =>
-        level.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const term = searchTerm.toLowerCase().trim();
+
+    const filteredLevels = globalLevels.filter(level => {
+        if (level.name.toLowerCase().includes(term)) return true;
+        if (level.author && level.author.toLowerCase().includes(term)) return true;
+        if (level.verifier && level.verifier.toLowerCase().includes(term)) return true;
+        if (level.creators && level.creators.some(c => c.toLowerCase().includes(term))) return true;
+        if (level.records && level.records.some(r => r.user && r.user.toLowerCase().includes(term))) return true;
+        return false;
+    });
 
     filteredLevels.forEach(nivel => {
         const item = document.createElement('div');
