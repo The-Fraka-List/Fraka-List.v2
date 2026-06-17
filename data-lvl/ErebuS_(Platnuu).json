@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=ZsCFosPX3D0",
+            "percent": 100,
+            "hz": 120
+        }
     ]
 }
