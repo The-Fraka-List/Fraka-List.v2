@@ -40,22 +40,57 @@ async function inicializarSitio() {
         const resListIndex = await fetch('data-lvl/_list.json');
         const listaNombres = await resListIndex.json(); 
 
+        const bugs = [];
+
         const promesasNiveles = listaNombres.map(async (nombreArchivo, index) => {
             try {
                 const resNivel = await fetch(`data-lvl/${nombreArchivo}.json`);
                 if (!resNivel.ok) throw new Error(`No se pudo cargar ${nombreArchivo}.json`);
                 const datosNivel = await resNivel.json();
-                
+
+                if (!datosNivel.id || !datosNivel.name) {
+                    bugs.push({
+                        file: `${nombreArchivo}.json`,
+                        reason: 'Archivo mal escrito (falta "id" o "name").'
+                    });
+                    return null;
+                }
+
                 datosNivel.rank = index + 1;
+                datosNivel._file = `${nombreArchivo}.json`;
                 return datosNivel;
             } catch (err) {
                 console.warn(`Error al cargar el nivel individual: ${nombreArchivo}`, err);
+                bugs.push({
+                    file: `${nombreArchivo}.json`,
+                    reason: 'Código mal ejecutado o archivo no encontrado.'
+                });
                 return null;
             }
         });
 
         const nivelesCargados = await Promise.all(promesasNiveles);
         globalLevels = nivelesCargados.filter(n => n !== null);
+
+        // Detección de IDs duplicadas entre los niveles cargados correctamente
+        const idMap = {};
+        globalLevels.forEach(nivel => {
+            if (!idMap[nivel.id]) idMap[nivel.id] = [];
+            idMap[nivel.id].push(nivel);
+        });
+        Object.values(idMap).forEach(grupo => {
+            if (grupo.length > 1) {
+                grupo.forEach(nivel => {
+                    const otros = grupo.filter(n => n !== nivel).map(n => n._file).join(', ');
+                    bugs.push({
+                        file: nivel._file,
+                        reason: `ID duplicada (${nivel.id}), compartida con ${otros}.`
+                    });
+                });
+            }
+        });
+
+        renderBugTab(bugs);
 
         renderLeaderboard();
 
@@ -79,6 +114,31 @@ async function inicializarSitio() {
     } catch (error) {
         console.error("Error crítico al inicializar la estructura dinámica data-lvl:", error);
     }
+}
+
+function renderBugTab(bugs) {
+    const tabEl = document.getElementById('bug-tab');
+    if (!tabEl) return;
+
+    if (!bugs || bugs.length === 0) {
+        tabEl.classList.remove('has-bugs', 'open');
+        return;
+    }
+
+    const list = document.getElementById('bug-tab-list');
+    list.innerHTML = bugs.map(b => `
+        <li class="bug-tab__item">
+            <div class="bug-tab__item-file">${b.file}</div>
+            <div class="bug-tab__item-reason">${b.reason}</div>
+        </li>
+    `).join('');
+
+    tabEl.classList.add('has-bugs');
+}
+
+function toggleBugTab() {
+    const tabEl = document.getElementById('bug-tab');
+    if (tabEl) tabEl.classList.toggle('open');
 }
 
 function renderSidebar() {
