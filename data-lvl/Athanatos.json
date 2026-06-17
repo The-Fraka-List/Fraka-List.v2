@@ -14,6 +14,18 @@
             "link": "https://www.youtube.com/watch?v=fHGvk_VLVvk",
             "percent": 100,
             "hz": 60
+        },
+        {
+            "user": "Toxic",
+            "link": "https://www.youtube.com/watch?v=updKNVvOSS0",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "Shiku",
+            "link": "https://www.youtube.com/watch?v=WheL4lmjvio",
+            "percent": 100,
+            "hz": 120
         }
     ]
 }
