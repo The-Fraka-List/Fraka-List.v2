@@ -33,15 +33,25 @@ export async function render(container) {
             const username = record.user.trim();
             if (!username) return;
 
-            if (!playerRegistry[username]) {
-              playerRegistry[username] = {
-                name: username,
-                points: 0,
-                completions: 0,
-                listProgress: 0,
-                hardest: { name: levelData.name, rank: topPosition }
-              };
-            }
+const nombreNivelSeguro = levelData.name || fileName.replace('.json', '');
+
+if (!playerRegistry[username]) {
+  playerRegistry[username] = {
+    name: username,
+    points: 0,
+    completions: 0,
+    listProgress: 0,
+    hardest: { name: nombreNivelSeguro, rank: topPosition }
+  };
+}
+
+const currentPlayer = playerRegistry[username];
+
+
+if (topPosition < currentPlayer.hardest.rank && record.percent === 100) {
+  currentPlayer.hardest.name = nombreNivelSeguro;
+  currentPlayer.hardest.rank = topPosition;
+}
 
             const currentPlayer = playerRegistry[username];
 
