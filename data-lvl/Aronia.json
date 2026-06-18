@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "AleezCourtz",
+            "link": "https://youtu.be/KmbETrtMbcc?si=nzj_hY2SqXcR7ueg",
+            "percent": 100,
+            "hz": 60
+        }
     ]
 }
