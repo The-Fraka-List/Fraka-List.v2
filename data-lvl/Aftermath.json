@@ -8,6 +8,12 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+                {
+            "user": "Fiumba_47",
+            "link": "https://www.youtube.com/watch?v=qMLWRqjkySg",
+            "percent": 100,
+            "hz": 120
+        },
         {
             "user": "Kepta_bb",
             "link": "https://www.youtube.com/watch?v=_ZA08m4FxTs",
