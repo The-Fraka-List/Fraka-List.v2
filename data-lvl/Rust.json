@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "Kepta_bb",
+            "link": "https://www.youtube.com/watch?v=rJ_7juuvG60",
+            "percent": 100,
+            "hz": 120
+        }
     ]
 }

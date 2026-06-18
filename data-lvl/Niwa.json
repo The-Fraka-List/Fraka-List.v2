@@ -49,6 +49,12 @@
             "link": "https://www.youtube.com/watch?v=oMle-FJ4cL0",
             "percent": 100,
             "hz": 280
+        },
+        {
+            "user": "Enzo",
+            "link": "https://www.youtube.com/watch?v=b4ZMERDWruA",
+            "percent": 100,
+            "hz": 160
         }
     ]
 }

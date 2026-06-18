@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "Dirinrex",
+            "link": "https://www.youtube.com/watch?v=4RAs38YH_Eo",
+            "percent": 100,
+            "hz": 120
+        }
     ]
 }

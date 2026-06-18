@@ -25,6 +25,12 @@
             "link": "https://www.youtube.com/watch?v=3J3NZYxKoJ4",
             "percent": 100,
             "hz": 60
+        },
+        {
+            "user": "Eduh",
+            "link": "https://www.youtube.com/watch?v=r3bDdIvul8w",
+            "percent": 100,
+            "hz": 120
         }
     ]
 }

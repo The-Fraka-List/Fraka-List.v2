@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=uQP-PaN9AVI",
+            "percent": 100,
+            "hz": 80
+        }
     ]
 }

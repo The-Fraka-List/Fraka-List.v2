@@ -2,7 +2,7 @@
     "id": 34379100,
     "name": "Deception Dive",
     "author": "Rustam",
-    "creators": ["Berke423, Rustam, ZenthicAlpha, Mazl, RealZober, Sharks, Lucasyecla99, Krampux, Disp, Platnuu and Ryder"],
+    "creators": ["Berke423, Rustam, ZenthicAlpha, Mazl and more"],
     "verifier": "AleezCourtz",
     "verification": "https://www.youtube.com/watch?v=G_gmJAQM-X0",
     "percentToQualify": "100",
@@ -11,6 +11,12 @@
         {
             "user": "Toxic",
             "link": "https://www.youtube.com/watch?v=forK3-JFDug",
+            "percent": 100,
+            "hz": 160
+        },
+        {
+            "user": "AleezCourtz",
+            "link": "https://www.youtube.com/watch?v=G_gmJAQM-X0",
             "percent": 100,
             "hz": 160
         }

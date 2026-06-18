@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "xReizer",
+            "link": "https://www.youtube.com/watch?v=LFwKwu560r4&pp=ygUReHJlaXplcmEgYXJ0aWZpY2XSBwkJ2goBhyohjO8%3D",
+            "percent": 100,
+            "hz": 120
+        }
     ]
 }

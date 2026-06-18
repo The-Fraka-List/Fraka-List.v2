@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "Fabygamer",
+            "link": "https://youtu.be/gtncl_3pkgc?si=rA7u-H-7Hq4cm79E",
+            "percent": 100,
+            "hz": 160
+        }
     ]
 }

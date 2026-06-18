@@ -8,5 +8,11 @@
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
+        {
+            "user": "PlayLino",
+            "link": "https://youtu.be/IUf_XhdRZYQ?si=inRRew2t9KLI5SYY",
+            "percent": 100,
+            "hz": 120
+        }
     ]
 }
