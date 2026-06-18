@@ -60,6 +60,14 @@ async function inicializarSitio() {
 
                 datosNivel.rank = index + 1;
                 datosNivel._file = `${nombreArchivo}.json`;
+
+                if (Array.isArray(datosNivel.records) && datosNivel.records.length === 0) {
+                    bugs.push({
+                        file: `${nombreArchivo}.json`,
+                        reason: `${nombreArchivo}.json no tiene un record registrado.`
+                    });
+                }
+
                 return datosNivel;
             } catch (err) {
                 console.warn(`Error al cargar el nivel individual: ${nombreArchivo}`, err);
