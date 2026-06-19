@@ -1,4 +1,14 @@
 
+// Sistema de puntos: Top 1 = 500.00, Top 150 = 14.50, curva exponencial progresiva
+// entre medio, y 0.01 fijo para cualquier posición fuera del Top 150.
+function getMaxPointsForPosition(topPosition) {
+  if (topPosition <= 1) return 500;
+  if (topPosition >= 150) return topPosition === 150 ? 14.5 : 0.01;
+  const ratio = 14.5 / 500;
+  const points = 500 * Math.pow(ratio, (topPosition - 1) / 149);
+  return Math.round(points * 100) / 100;
+}
+
 export async function render(container) {
   container.innerHTML = `
     <div class="state-message">
@@ -25,33 +35,24 @@ export async function render(container) {
         const levelData = await res.json();
         const topPosition = index + 1; 
 
-        
-        const maxLevelPoints = Math.max(50, 250 - (topPosition * 3));
+        const maxLevelPoints = getMaxPointsForPosition(topPosition);
 
         if (levelData.records && Array.isArray(levelData.records)) {
           levelData.records.forEach(record => {
             const username = record.user.trim();
             if (!username) return;
 
-const nombreNivelSeguro = levelData.name || fileName.replace('.json', '');
+            const nombreNivelSeguro = levelData.name || fileName.replace('.json', '');
 
-if (!playerRegistry[username]) {
-  playerRegistry[username] = {
-    name: username,
-    points: 0,
-    completions: 0,
-    listProgress: 0,
-    hardest: { name: nombreNivelSeguro, rank: topPosition }
-  };
-}
-
-const currentPlayer = playerRegistry[username];
-
-
-if (topPosition < currentPlayer.hardest.rank && record.percent === 100) {
-  currentPlayer.hardest.name = nombreNivelSeguro;
-  currentPlayer.hardest.rank = topPosition;
-}
+            if (!playerRegistry[username]) {
+              playerRegistry[username] = {
+                name: username,
+                points: 0,
+                completions: 0,
+                listProgress: 0,
+                hardest: { name: nombreNivelSeguro, rank: topPosition }
+              };
+            }
 
             const currentPlayer = playerRegistry[username];
 
@@ -60,12 +61,12 @@ if (topPosition < currentPlayer.hardest.rank && record.percent === 100) {
               currentPlayer.completions += 1;
             } else if (record.percent >= parseInt(levelData.percentToQualify || 50)) {
               const progressScore = maxLevelPoints * (record.percent / 100) * 0.4;
-              currentPlayer.points += Math.round(progressScore * 10) / 10;
+              currentPlayer.points += Math.round(progressScore * 100) / 100;
               currentPlayer.listProgress += 1;
             }
 
             if (topPosition < currentPlayer.hardest.rank && record.percent === 100) {
-              currentPlayer.hardest.name = levelData.name;
+              currentPlayer.hardest.name = nombreNivelSeguro;
               currentPlayer.hardest.rank = topPosition;
             }
           });
@@ -86,9 +87,9 @@ if (topPosition < currentPlayer.hardest.rank && record.percent === 100) {
       if (idx === 2) medal = '🥉';
       return `
         <tr class="leaderboard-row">
-          <td class="lb-rank">${player.points.toFixed(1) && medal}</td>
+          <td class="lb-rank">${player.points.toFixed(2) && medal}</td>
           <td class="lb-player">${player.name}</td>
-          <td class="lb-pts">${player.points.toFixed(1)} <span>PTS</span></td>
+          <td class="lb-pts">${player.points.toFixed(2)} <span>PTS</span></td>
           <td class="lb-center">${player.completions}</td>
           <td class="lb-center">${player.listProgress}</td>
           <td class="lb-right">
@@ -116,7 +117,7 @@ if (topPosition < currentPlayer.hardest.rank && record.percent === 100) {
               <span><strong>${player.listProgress}</strong> progresos</span>
             </div>
           </div>
-          <div class="lb-card__pts">${player.points.toFixed(1)}<span>PTS</span></div>
+          <div class="lb-card__pts">${player.points.toFixed(2)}<span>PTS</span></div>
         </div>`;
     }).join('');
 

@@ -1,6 +1,16 @@
 let globalLevels = [];
 let globalLeaderboard = [];
 
+// Sistema de puntos: Top 1 = 500.00, Top 150 = 14.50, curva exponencial progresiva
+// entre medio, y 0.01 fijo para cualquier posición fuera del Top 150.
+function getMaxPointsForPosition(topPosition) {
+    if (topPosition <= 1) return 500;
+    if (topPosition >= 150) return topPosition === 150 ? 14.5 : 0.01;
+    const ratio = 14.5 / 500;
+    const points = 500 * Math.pow(ratio, (topPosition - 1) / 149);
+    return Math.round(points * 100) / 100;
+}
+
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         const toast = document.createElement('div');
@@ -251,7 +261,7 @@ function mostrarDetallesNivel(idNivel) {
         }
     }
 
-    const puntosCalculados = Math.max(1, 101 - nivel.rank);
+    const puntosCalculados = getMaxPointsForPosition(nivel.rank).toFixed(2);
 
     let recordsHTML = `
         <div style="background: var(--bg-base); padding: var(--space-4); border-radius: var(--radius-md); border: 1px dashed var(--border); text-align: center;">
@@ -351,7 +361,7 @@ function openPlayerModal(playerData) {
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-bottom: var(--space-6);">
             <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
                 <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-2);">Puntos Totales</div>
-                <div class="text-mono" style="font-size: 1.3rem; font-weight: 700; color: var(--accent-light);">${playerData.points.toFixed(1)}</div>
+                <div class="text-mono" style="font-size: 1.3rem; font-weight: 700; color: var(--accent-light);">${playerData.points.toFixed(2)}</div>
             </div>
             <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center;">
                 <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-2);">Completados</div>
@@ -505,7 +515,7 @@ globalLevels.forEach(nivel => {
     if (!nivel || !nivel.records || !Array.isArray(nivel.records)) return;
 
     const topPosition = nivel.rank;
-    const maxLevelPoints = Math.max(50, 250 - (topPosition * 3));
+    const maxLevelPoints = getMaxPointsForPosition(topPosition);
     
     const nombreNivelSeguro = nivel.name || "Nivel Desconocido";
 
@@ -537,7 +547,7 @@ globalLevels.forEach(nivel => {
             });
         } else if (record.percent >= parseInt(nivel.percentToQualify || 50)) {
             const progressScore = maxLevelPoints * (record.percent / 100) * 0.4;
-            p.points += Math.round(progressScore * 10) / 10;
+            p.points += Math.round(progressScore * 100) / 100;
             p.listProgress += 1;
             p.progressLevels.push({
                 level: nombreNivelSeguro,
@@ -613,7 +623,7 @@ globalLevels.forEach(nivel => {
                 <td class="text-mono" style="padding: var(--space-4); font-weight: 700; font-size: 1.1rem; color: var(--accent-light);">${medal}</td>
                 <td style="padding: var(--space-4); font-weight: 600; color: var(--text-primary);">${player.name}</td>
                 <td class="text-mono" style="padding: var(--space-4); font-weight: 700; color: #fff;">
-                    ${player.points.toFixed(1)} <span style="font-size: 0.8rem; color: var(--accent-light);">PTS</span>
+                    ${player.points.toFixed(2)} <span style="font-size: 0.8rem; color: var(--accent-light);">PTS</span>
                 </td>
                 <td style="padding: var(--space-4); text-align: center; color: var(--text-primary);">${player.completions}</td>
                 <td style="padding: var(--space-4); text-align: center; color: var(--text-secondary);">${player.listProgress}</td>
