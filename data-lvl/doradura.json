@@ -25,6 +25,12 @@
             "link": "https://www.youtube.com/watch?v=UEnORBh5sYE",
             "percent": 100,
             "hz": 160
+        },
+        {
+            "user": "Juniorlock",
+            "link": "https://www.youtube.com/watch?v=U3y4RdvHfck&t=43s",
+            "percent": 100,
+            "hz": 60
         }
     ]
 }
