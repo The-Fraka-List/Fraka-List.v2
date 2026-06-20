@@ -13,13 +13,8 @@
         <button class="nav__link-btn" data-tab="tab-roulette">Roulette</button>
         <button class="nav__link-btn" data-tab="tab-frk-dm">FRK-DM</button>
         <div class="nav__mobile-actions">
-            <a href="https://discord.gg/5Ht99YYBwn" target="_blank" class="btn"
-               style="background:#5865F2;border:1px solid #5865F2;color:white;font-family:var(--font-mono);font-weight:bold;text-decoration:none;">
-               DISCORD
-            </a>
-            <a href="https://discord.gg/5Ht99YYBwn" class="btn btn--primary"
-               style="font-family:var(--font-mono);font-weight:bold;text-decoration:none;">
-               SUBIR RECORD
+            <a href="https://discord.gg/5Ht99YYBwn" target="_blank" class="nav__discord-btn" aria-label="Discord">
+                <img src="assets/img/discord-icon.svg" alt="" class="nav__discord-icon">
             </a>
         </div>
     `;

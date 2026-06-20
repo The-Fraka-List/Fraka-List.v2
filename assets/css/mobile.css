@@ -64,19 +64,10 @@
 
 .nav__mobile-actions {
     display: flex;
-    gap: var(--space-2);
+    justify-content: center;
     padding-top: var(--space-3);
     border-top: 1px solid var(--border);
     margin-top: var(--space-1);
-}
-.nav__mobile-actions a.btn {
-    flex: 1;
-    font-size: 0.72rem !important;
-    padding: 7px 10px !important;
-    min-height: 34px !important;
-    text-align: center;
-    letter-spacing: 0.03em;
-    line-height: 1;
 }
 
 
@@ -416,7 +407,6 @@
     .nav__logo span { font-size: 1.1rem !important; }
     .main-content.active { padding-inline: var(--space-2) !important; }
     #level-details h1 { font-size: 1.35rem !important; }
-    .nav__mobile-actions a.btn { font-size: 0.65rem !important; padding: 6px 8px !important; }
     .lb-card { padding: var(--space-2) var(--space-3); gap: var(--space-2); }
     .lb-card__name { font-size: var(--font-sm); }
     .lb-card__pts  { font-size: var(--font-sm); }

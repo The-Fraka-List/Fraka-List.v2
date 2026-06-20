@@ -79,3 +79,28 @@
 #tab-leaderboard::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
 }
+
+.nav__discord-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background: var(--accent);
+    border: 1px solid var(--border-accent);
+    text-decoration: none;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.nav__discord-btn:hover {
+    background: var(--accent-light);
+    transform: translateY(-1px);
+}
+
+.nav__discord-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
