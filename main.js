@@ -33,16 +33,107 @@ function copyToClipboard(text) {
     });
 }
 
-function switchTab(tabId, buttonElement) {
+// Centraliza la navegación leyendo directamente el hash de la URL
+function switchTabByHash() {
+    const hash = window.location.hash.replace('#', '') || 'list';
+    
+    // Mapeo de hashes a los IDs de las secciones <section>
+    const routes = {
+        'list': 'tab-list',
+        'leaderboard': 'tab-leaderboard',
+        'roulette': 'tab-roulette',
+        'frk-dm': 'tab-frk-dm',
+        'challenges': 'tab-frk-dm' // Soporte por si decides usar #challenges para la sección FRK-DM
+    };
+    
+    const targetTabId = routes[hash] || 'tab-list';
+    const targetRouteName = (hash === 'challenges') ? 'frk-dm' : (routes[hash] ? hash : 'list');
+
+    // Desactivar visualmente todas las secciones y botones
     document.querySelectorAll('.main-content').forEach(section => {
         section.classList.remove('active');
     });
     document.querySelectorAll('.nav__link-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    document.getElementById(tabId).classList.add('active');
-    buttonElement.classList.add('active');
+
+    // Activar la sección correspondiente
+    const targetSection = document.getElementById(targetTabId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+
+    // Activar el botón del menú correspondiente usando el data-route
+    const targetBtn = document.querySelector(`.nav__link-btn[data-route="${targetRouteName}"]`);
+    if (targetBtn) {
+        targetBtn.classList.add('active');
+    }
 }
+
+// ── SISTEMA DE ENRUTAMIENTO DINÁMICO Y ESCALABLE ──────────────────────
+
+function handleHashRouting() {
+    // 1. Extraer el identificador del hash actual (ej: '#roulette' -> 'roulette')
+    let route = window.location.hash.replace('#', '').toLowerCase();
+    if (!route) route = 'list'; // Por defecto, si está vacío va a 'list'
+
+    // Excepción única por si usas el alias heredado '#challenges' para la sección frk-dm
+    if (route === 'challenges') route = 'frk-dm';
+
+    // 2. Construir dinámicamente el ID de la sección que deberíamos buscar
+    const targetSectionId = `tab-${route}`;
+    let targetSection = document.getElementById(targetSectionId);
+
+    // Redirección de seguridad: Si el hash inventariado no existe en el HTML, volver a la lista principal
+    if (!targetSection) {
+        route = 'list';
+        targetSection = document.getElementById('tab-list');
+    }
+
+    // 3. Desactivar visualmente todas las secciones y botones que existan en la página
+    document.querySelectorAll('.main-content').forEach(section => {
+        section.classList.remove('active');
+    });
+    document.querySelectorAll('.nav__link-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // 4. Activar dinámicamente la sección encontrada y su correspondiente botón de navegación
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+
+    const targetBtn = document.querySelector(`.nav__link-btn[data-route="${route}"]`);
+    if (targetBtn) {
+        targetBtn.classList.add('active');
+    }
+}
+
+// Vincula de forma automática el evento de click a todos los botones del menú presentes en el DOM
+function initDynamicNavigation() {
+    document.querySelectorAll('.nav__link-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const route = btn.getAttribute('data-route');
+            if (route) {
+                window.location.hash = route; // Cambiar el hash dispara 'hashchange' automáticamente
+            }
+        });
+    });
+}
+
+// Función puente de retrocompatibilidad por si otros scripts de apartados llaman a switchTab por código
+function switchTab(tabId, buttonElement) {
+    const route = tabId.replace('tab-', '');
+    window.location.hash = route;
+}
+
+// ESCUCHADORES DE EVENTOS DEL SISTEMA
+window.addEventListener('hashchange', handleHashRouting);
+
+document.addEventListener('DOMContentLoaded', () => {
+    initDynamicNavigation(); // Escucha los clics de cualquier botón con la clase .nav__link-btn
+    handleHashRouting();     // Evalúa el hash con el que se abrió la página originalmente
+});
 
 async function inicializarSitio() {
     try {
@@ -929,3 +1020,8 @@ function rouletteToggleRemaining() {
 
 inicializarSitio();
 document.addEventListener('DOMContentLoaded', rouletteInit);
+// Escuchar cuando el usuario cambia el hash manualmente o usa las flechas del navegador
+window.addEventListener('hashchange', switchTabByHash);
+
+// Ejecutar inmediatamente al cargar el archivo para abrir la sección correcta si usan un enlace directo
+switchTabByHash();
