@@ -1,0 +1,18 @@
+{
+    "id": 101478916,
+    "name": "Eon",
+    "author": "Renn241",
+    "creators": ["Renn241"],
+    "verifier": "elmatigeims",
+    "verification": "https://youtu.be/5i1u7fJ7vzo?si=okz-HEoR-doD6Hix",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "elmatigeims",
+            "link": "https://youtu.be/5i1u7fJ7vzo?si=okz-HEoR-doD6Hix",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

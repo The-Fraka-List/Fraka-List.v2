@@ -1,0 +1,18 @@
+{
+    "id": 52527538,
+    "name": "Cat Planet",
+    "author": "Darwin",
+    "creators": ["Darwin"],
+    "verifier": "elmatigeims",
+    "verification": "https://youtu.be/W9J3kXdcXRY?si=IavyXcl2OwwqJGf-",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "elmatigeims",
+            "link": "https://youtu.be/W9J3kXdcXRY?si=IavyXcl2OwwqJGf-",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

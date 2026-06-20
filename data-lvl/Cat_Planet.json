@@ -1,0 +1,18 @@
+{
+    "id": 84766628,
+    "name": "Cat Planet",
+    "author": "icedcave",
+    "creators": ["icedcave"],
+    "verifier": "elmatigeims",
+    "verification": "https://youtu.be/NHXvKj-83V8?si=K0Hsk4LJt5ThX6_z",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "elmatigeims",
+            "link": "https://youtu.be/NHXvKj-83V8?si=K0Hsk4LJt5ThX6_z",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}
