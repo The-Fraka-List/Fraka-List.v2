@@ -1,0 +1,18 @@
+{
+    "id": 62551239,
+    "name": "Sigma Interface",
+    "author": "Platnuu",
+    "creators": ["TeslaX, Platnuu"],
+    "verifier": "el_d0c1",
+    "verification": "https://www.youtube.com/watch?v=sClpIfIWVVc&list=PLELpjRfo_Td42AOcQG6T64K9f6ML7QGot&index=16",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "el_d0c1",
+            "link": "https://www.youtube.com/watch?v=sClpIfIWVVc&list=PLELpjRfo_Td42AOcQG6T64K9f6ML7QGot&index=16",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

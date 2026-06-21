@@ -1,0 +1,18 @@
+{
+    "id": 86513236,
+    "name": "Agen Wida",
+    "author": "Unbipentium",
+    "creators": ["Unbipentium, KlaurosssS"],
+    "verifier": "el_d0c1",
+    "verification": "https://www.youtube.com/watch?v=g1BCeYhioxw&list=PLELpjRfo_Td42AOcQG6T64K9f6ML7QGot&index=11",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "el_d0c1",
+            "link": "https://www.youtube.com/watch?v=g1BCeYhioxw&list=PLELpjRfo_Td42AOcQG6T64K9f6ML7QGot&index=11",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
