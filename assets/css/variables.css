@@ -57,3 +57,11 @@
     --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* ── Vista Legacy (Top 151+): todo lo rojo sangre/vino pasa a blanco puro ── */
+body.legacy-mode {
+    --accent: #ffffff;
+    --accent-light: #ffffff;
+    --accent-glow: rgba(255, 255, 255, 0.18);
+    --border-accent: #ffffff;
+}

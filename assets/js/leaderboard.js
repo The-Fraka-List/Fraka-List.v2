@@ -3,7 +3,7 @@
 // entre medio, y 0.01 fijo para cualquier posición fuera del Top 150.
 function getMaxPointsForPosition(topPosition) {
   if (topPosition <= 1) return 500;
-  if (topPosition >= 150) return topPosition === 150 ? 14.5 : 0.01;
+  if (topPosition >= 150) return topPosition === 150 ? 14.5 : 0.10;
   const ratio = 14.5 / 500;
   const points = 500 * Math.pow(ratio, (topPosition - 1) / 149);
   return Math.round(points * 100) / 100;

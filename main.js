@@ -1,5 +1,71 @@
 let globalLevels = [];
 let globalLeaderboard = [];
+let legacyMode = false;
+let currentDetailLevelId = null;
+
+// Top 1-150 = vista principal, Top 151+ = vista Legacy (oculta por defecto, pero ya cargada)
+const LEGACY_THRESHOLD = 150;
+
+function getVisibleLevels(levels) {
+    return legacyMode
+        ? levels.filter(n => n.rank > LEGACY_THRESHOLD)
+        : levels.filter(n => n.rank <= LEGACY_THRESHOLD);
+}
+
+function updateListLabel(isLegacy) {
+    const label = isLegacy ? 'LEGACY' : 'LIST';
+
+    const logoSpan = document.querySelector('.nav__logo .text-accent');
+    if (logoSpan) logoSpan.textContent = label;
+
+    const navBtn = document.querySelector('.nav__links .nav__link-btn[data-route="list"]');
+    if (navBtn) navBtn.textContent = label.charAt(0) + label.slice(1).toLowerCase();
+
+    const mobileBtn = document.querySelector('.nav__mobile-menu [data-tab="tab-list"]');
+    if (mobileBtn) mobileBtn.textContent = label.charAt(0) + label.slice(1).toLowerCase();
+}
+
+function updateDiscordIcon(isLegacy) {
+    const iconSrc = isLegacy ? 'assets/img/discord-icon-ngr.svg' : 'assets/img/discord-icon.svg';
+    document.querySelectorAll('.nav__discord-icon').forEach(img => {
+        img.src = iconSrc;
+    });
+}
+
+function toggleLegacyMode() {
+    legacyMode = !legacyMode;
+
+    document.body.classList.toggle('legacy-mode', legacyMode);
+
+    const toggleBtn = document.getElementById('legacy-toggle');
+    if (toggleBtn) {
+        toggleBtn.classList.toggle('active', legacyMode);
+        toggleBtn.setAttribute('aria-pressed', String(legacyMode));
+    }
+
+    updateListLabel(legacyMode);
+    updateDiscordIcon(legacyMode);
+
+    // Re-renderizar la sidebar respetando una búsqueda activa, si la hay
+    const searchInput = document.getElementById('level-search');
+    if (searchInput && searchInput.value.trim() !== '') {
+        filterLevels(searchInput.value);
+    } else {
+        renderSidebar();
+    }
+
+    // Si el nivel abierto en el panel de detalles queda fuera del rango visible,
+    // mostrar automáticamente el primer nivel del modo recién activado
+    const nivelActual = globalLevels.find(n => n.id === currentDetailLevelId);
+    const fueraDeRango = !nivelActual || (legacyMode ? nivelActual.rank <= LEGACY_THRESHOLD : nivelActual.rank > LEGACY_THRESHOLD);
+
+    if (fueraDeRango) {
+        const primerNivelVisible = legacyMode
+            ? globalLevels.find(n => n.rank === LEGACY_THRESHOLD + 1)
+            : globalLevels.find(n => n.rank === 1);
+        if (primerNivelVisible) mostrarDetallesNivel(primerNivelVisible.id);
+    }
+}
 
 // Sistema de puntos: Top 1 = 500.00, Top 150 = 14.50, curva exponencial progresiva
 // entre medio, y 0.01 fijo para cualquier posición fuera del Top 150.
@@ -215,6 +281,11 @@ async function inicializarSitio() {
             });
         }
 
+        const legacyToggleBtn = document.getElementById('legacy-toggle');
+        if (legacyToggleBtn) {
+            legacyToggleBtn.addEventListener('click', toggleLegacyMode);
+        }
+
         if (globalLevels.length > 0) {
             mostrarDetallesNivel(globalLevels[0].id);
         }
@@ -256,7 +327,9 @@ function renderSidebar() {
     const sidebar = document.getElementById('levels-sidebar');
     sidebar.innerHTML = '';
 
-    globalLevels.forEach(nivel => {
+    const nivelesVisibles = getVisibleLevels(globalLevels);
+
+    nivelesVisibles.forEach(nivel => {
         const item = document.createElement('div');
         item.className = 'card level-card'; 
         item.id = `sidebar-item-${nivel.id}`;
@@ -287,7 +360,7 @@ function filterLevels(searchTerm) {
 
     const term = searchTerm.toLowerCase().trim();
 
-    const filteredLevels = globalLevels.filter(level => {
+    const filteredLevels = getVisibleLevels(globalLevels).filter(level => {
         if (level.name.toLowerCase().includes(term)) return true;
         if (level.author && level.author.toLowerCase().includes(term)) return true;
         if (level.verifier && level.verifier.toLowerCase().includes(term)) return true;
@@ -342,6 +415,8 @@ function mostrarDetallesNivel(idNivel) {
     const detailPanel = document.getElementById('level-details');
 
     if (!nivel) return;
+
+    currentDetailLevelId = idNivel;
 
     let youtubeId = "";
     if (nivel.verification) {
