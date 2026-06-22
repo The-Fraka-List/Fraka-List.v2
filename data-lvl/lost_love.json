@@ -13,6 +13,12 @@
             "link": "https://www.youtube.com/watch?v=X6N8MjSRPP0",
             "percent": 100,
             "hz": 120
+        },
+        {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=aTQ4P1gLyzc",
+            "percent": 100,
+            "hz": 60
         }
     ]
 }
