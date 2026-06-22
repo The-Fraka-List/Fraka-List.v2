@@ -19,6 +19,17 @@ export async function render(container) {
     </div>`;
 
   try {
+    // Cargar lista de jugadores baneados. Si falla, se continúa sin baneos.
+    let jugadoresBaneados = [];
+    try {
+      const resBaneos = await fetch('_baneos.json');
+      if (resBaneos.ok) {
+        jugadoresBaneados = await resBaneos.json();
+      }
+    } catch (baneoErr) {
+      console.warn('Leaderboard: no se pudo cargar _baneos.json, se omiten baneos.', baneoErr);
+    }
+
     const listResponse = await fetch('data-lvl/_list.json');
     if (!listResponse.ok) throw new Error("No se pudo mapear el archivo de índice _list.json");
     const levelFiles = await listResponse.json();
@@ -37,8 +48,14 @@ export async function render(container) {
 
         const maxLevelPoints = getMaxPointsForPosition(topPosition);
 
-        if (levelData.records && Array.isArray(levelData.records)) {
-          levelData.records.forEach(record => {
+        // Filtrar records de jugadores baneados antes de calcular puntos.
+        // Comparación exacta (case-sensitive). El JSON original no se modifica.
+        const recordsFiltrados = Array.isArray(levelData.records)
+          ? levelData.records.filter(rec => !jugadoresBaneados.includes(rec.user))
+          : [];
+
+        if (recordsFiltrados.length > 0) {
+          recordsFiltrados.forEach(record => {
             const username = record.user.trim();
             if (!username) return;
 

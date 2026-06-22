@@ -101,19 +101,24 @@ function copyToClipboard(text) {
 
 // Centraliza la navegación leyendo directamente el hash de la URL
 function switchTabByHash() {
-    const hash = window.location.hash.replace('#', '') || 'list';
+    const rawHash = window.location.hash.replace('#', '');
+
+    // Sin hash en la URL → pantalla de bienvenida.
+    // Con cualquier hash válido → sección correspondiente.
+    const hash = rawHash || 'welcome';
     
     // Mapeo de hashes a los IDs de las secciones <section>
     const routes = {
-        'list': 'tab-list',
+        'welcome':     'tab-welcome',
+        'list':        'tab-list',
         'leaderboard': 'tab-leaderboard',
-        'roulette': 'tab-roulette',
-        'frk-dm': 'tab-frk-dm',
-        'challenges': 'tab-frk-dm' // Soporte por si decides usar #challenges para la sección FRK-DM
+        'roulette':    'tab-roulette',
+        'frk-dm':      'tab-frk-dm',
+        'challenges':  'tab-frk-dm' // Soporte por si decides usar #challenges para la sección FRK-DM
     };
     
-    const targetTabId = routes[hash] || 'tab-list';
-    const targetRouteName = (hash === 'challenges') ? 'frk-dm' : (routes[hash] ? hash : 'list');
+    const targetTabId = routes[hash] || 'tab-welcome';
+    const targetRouteName = (hash === 'challenges') ? 'frk-dm' : (routes[hash] ? hash : 'welcome');
 
     // Desactivar visualmente todas las secciones y botones
     document.querySelectorAll('.main-content').forEach(section => {
@@ -141,7 +146,7 @@ function switchTabByHash() {
 function handleHashRouting() {
     // 1. Extraer el identificador del hash actual (ej: '#roulette' -> 'roulette')
     let route = window.location.hash.replace('#', '').toLowerCase();
-    if (!route) route = 'list'; // Por defecto, si está vacío va a 'list'
+    if (!route) route = 'welcome'; // Sin hash → pantalla de bienvenida
 
     // Excepción única por si usas el alias heredado '#challenges' para la sección frk-dm
     if (route === 'challenges') route = 'frk-dm';
@@ -150,10 +155,10 @@ function handleHashRouting() {
     const targetSectionId = `tab-${route}`;
     let targetSection = document.getElementById(targetSectionId);
 
-    // Redirección de seguridad: Si el hash inventariado no existe en el HTML, volver a la lista principal
+    // Redirección de seguridad: Si el hash no existe en el HTML, volver a la bienvenida
     if (!targetSection) {
-        route = 'list';
-        targetSection = document.getElementById('tab-list');
+        route = 'welcome';
+        targetSection = document.getElementById('tab-welcome');
     }
 
     // 3. Desactivar visualmente todas las secciones y botones que existan en la página
@@ -203,7 +208,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function inicializarSitio() {
     try {
-        // A) Leer el índice maestro de niveles
+        // A) Cargar lista de jugadores baneados desde _baneos.json
+        // Si el archivo no existe o falla, se continúa sin baneos (array vacío).
+        let jugadoresBaneados = [];
+        try {
+            const resBaneos = await fetch('_baneos.json');
+            if (resBaneos.ok) {
+                jugadoresBaneados = await resBaneos.json();
+            }
+        } catch (baneoErr) {
+            console.warn('No se pudo cargar _baneos.json, se omiten baneos.', baneoErr);
+        }
+
+        // B) Leer el índice maestro de niveles
         const resListIndex = await fetch('data-lvl/_list.json');
         const listaNombres = await resListIndex.json(); 
 
@@ -228,11 +245,23 @@ async function inicializarSitio() {
                 datosNivel.rank = index + 1;
                 datosNivel._file = `${nombreArchivo}.json`;
 
-                if (Array.isArray(datosNivel.records) && datosNivel.records.length === 0) {
+                // El bug check usa el conteo ORIGINAL del JSON, antes de aplicar baneos.
+                // Así solo reporta bug si el nivel genuinamente no tiene records,
+                // y no confunde un nivel con todos sus records baneados como un nivel vacío.
+                const recordsOriginales = Array.isArray(datosNivel.records) ? datosNivel.records.length : 0;
+                if (recordsOriginales === 0) {
                     bugs.push({
                         file: `${nombreArchivo}.json`,
                         reason: `${nombreArchivo}.json no tiene un record registrado.`
                     });
+                }
+
+                // C) Filtrar records de jugadores baneados (comparación exacta, case-sensitive)
+                // Se opera sobre el objeto en memoria; el archivo JSON original no se toca.
+                if (Array.isArray(datosNivel.records) && jugadoresBaneados.length > 0) {
+                    datosNivel.records = datosNivel.records.filter(
+                        rec => !jugadoresBaneados.includes(rec.user)
+                    );
                 }
 
                 return datosNivel;
