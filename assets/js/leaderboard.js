@@ -30,9 +30,26 @@ export async function render(container) {
       console.warn('Leaderboard: no se pudo cargar _baneos.json, se omiten baneos.', baneoErr);
     }
 
+    // Cargar lista de niveles baneados. Si falla, se continua sin baneos de niveles.
+    let nivelesBaneados = [];
+    try {
+      const resLvlBaneos = await fetch('_lvl_baneos.json');
+      if (resLvlBaneos.ok) {
+        nivelesBaneados = await resLvlBaneos.json();
+      }
+    } catch (lvlBaneoErr) {
+      console.warn('Leaderboard: no se pudo cargar _lvl_baneos.json, se omiten baneos de niveles.', lvlBaneoErr);
+    }
+
     const listResponse = await fetch('data-lvl/_list.json');
     if (!listResponse.ok) throw new Error("No se pudo mapear el archivo de índice _list.json");
-    const levelFiles = await listResponse.json();
+    const levelFilesRaw = await listResponse.json();
+
+    // Filtrar niveles baneados ANTES de iterar: el rank (index + 1) se reasigna
+    // automaticamente. Comparacion exacta (case-sensitive).
+    const levelFiles = nivelesBaneados.length > 0
+      ? levelFilesRaw.filter(nombre => !nivelesBaneados.includes(nombre.trim()))
+      : levelFilesRaw;
 
     const playerRegistry = {};
 

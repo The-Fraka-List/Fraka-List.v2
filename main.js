@@ -220,9 +220,27 @@ async function inicializarSitio() {
             console.warn('No se pudo cargar _baneos.json, se omiten baneos.', baneoErr);
         }
 
-        // B) Leer el índice maestro de niveles
+        // B) Cargar lista de niveles baneados desde _lvl_baneos.json
+        // Si el archivo no existe o falla, se continua sin baneos de niveles.
+        let nivelesBaneados = [];
+        try {
+            const resLvlBaneos = await fetch('_lvl_baneos.json');
+            if (resLvlBaneos.ok) {
+                nivelesBaneados = await resLvlBaneos.json();
+            }
+        } catch (lvlBaneoErr) {
+            console.warn('No se pudo cargar _lvl_baneos.json, se omiten baneos de niveles.', lvlBaneoErr);
+        }
+
+        // C) Leer el índice maestro de niveles y filtrar los baneados
+        // El filtro ocurre ANTES de iterar, por lo que el rank (index + 1)
+        // se reasigna automaticamente: si se baneó el top 5, el top 6 pasa a ser top 5.
+        // La comparacion es exacta (case-sensitive), igual que en _baneos.json.
         const resListIndex = await fetch('data-lvl/_list.json');
-        const listaNombres = await resListIndex.json(); 
+        const listaNombresRaw = await resListIndex.json();
+        const listaNombres = nivelesBaneados.length > 0
+            ? listaNombresRaw.filter(nombre => !nivelesBaneados.includes(nombre.trim()))
+            : listaNombresRaw;
 
         const bugs = [];
 
