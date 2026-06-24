@@ -1,0 +1,18 @@
+{
+    "id": 127320494,
+    "name": "my worst level",
+    "author": "MrPoopyBurger",
+    "creators": ["MrPoopyBurger"],
+    "verifier": "TheGlaiCat",
+    "verification": "https://www.youtube.com/watch?v=BBZXAqtqHPA",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "TheGlaiCat",
+            "link": "https://www.youtube.com/watch?v=BBZXAqtqHPA",
+            "percent": 100,
+            "hz": 144
+        }
+    ]
+}
