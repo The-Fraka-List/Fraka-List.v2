@@ -3,22 +3,22 @@
     "name": "A Bizarre Phantasm",
     "author": "TeamN2",
     "creators": ["ZenthicAlpha, Minus, Zelda, Koreaqwer and more"],
-    "verifier": "xReizer",
-    "verification": "https://www.youtube.com/watch?v=2aygimmAO5g",
+    "verifier": "S3b4s506_",
+    "verification": "https://www.youtube.com/watch?v=f5ap2ee2oio",
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
-        {
-            "user": "xReizer",
-            "link": "https://www.youtube.com/watch?v=2aygimmAO5g",
-            "percent": 100,
-            "hz": 120
-        },
         {
             "user": "S3b4s506_",
             "link": "https://www.youtube.com/watch?v=f5ap2ee2oio",
             "percent": 100,
             "hz": 280
+        },
+        {
+            "user": "xReizer",
+            "link": "https://www.youtube.com/watch?v=2aygimmAO5g",
+            "percent": 100,
+            "hz": 120
         }
     ]
 }
