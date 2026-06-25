@@ -27,6 +27,7 @@ Solamente se mete los RECORDS de las personas activas y que tengan el rol FRAKA 
     editores: [
         { nombre: 'Hanky_rawr', url: null },
         { nombre: 'Fiumba',      url: null },
+        { nombre: 'Aku',      url: null }
     ],
 
     // ── Listas de referencia ────────────────────────────────────────────────
