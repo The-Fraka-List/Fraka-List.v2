@@ -1,0 +1,29 @@
+[
+  {
+    "title": "Fraka del mes - JUNIO 2026",
+    "subtitle": "La competencia por el mejor llegó a su fin.",
+    "winner": "ElMatiGeims",
+    "banner": "assets/img/banners/mati.png",
+    "info": "La votación estuvo clara. en este mes no hubo muchos records y eso ocaciono que mati ganase por default.",
+    "subinfo": "No hay mucho que decir, fue un mes un tanto corto y tranquilo, felicidades a Mati por ganar este puesto!",
+    "votes": [
+      {
+        "voter": "S3b4s506_",
+        "score": 6
+      },
+      {
+        "voter": "Fiumba_47",
+        "score": 5
+      },
+      {
+        "voter": "Toxic",
+        "score": 3
+      },
+      {
+        "voter": "elmatigeims",
+        "score": 14
+      }
+    ],
+    "video": "https://www.youtube.com/watch?v=H9mDBPi5JEs"
+  }
+]
