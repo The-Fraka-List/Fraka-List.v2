@@ -193,7 +193,7 @@
         margin-top: 0 !important;
     }
     .container {
-        height: auto !important;
+        min-height: auto !important;
         overflow: visible !important;
         padding: 0 !important;
     }
@@ -227,14 +227,37 @@
     }
 
     .list-layout { display: block !important; height: auto !important; padding: 0 !important; }
-    #levels-sidebar {
+    .rising-view-shell {
+        height: auto !important;
+        min-height: auto !important;
+    }
+    .rising-leaderboard-container {
+        display: none !important;
+        height: auto !important;
+        overflow: visible !important;
+        padding-top: calc(var(--nav-height) + var(--space-4)) !important;
+        padding-inline: 0 !important;
+        padding-bottom: var(--space-4) !important;
+    }
+    .rising-leaderboard-container.active {
+        display: flex !important;
+    }
+    .rising-leaderboard-hero {
+        padding-bottom: var(--space-3) !important;
+    }
+    .rising-leaderboard-hero h1 {
+        font-size: 1.6rem !important;
+    }
+    #levels-sidebar,
+    #rising-sidebar {
         display: block !important;
         height: auto !important;
         max-height: none !important;
         overflow-y: visible !important;
         padding-right: 0 !important;
     }
-    #level-details {
+    #level-details,
+    #rising-details {
         display: none !important;
         height: auto !important;
         overflow-y: visible !important;
@@ -242,21 +265,29 @@
     }
     
     #levels-sidebar::-webkit-scrollbar,
-    #level-details::-webkit-scrollbar {
+    #level-details::-webkit-scrollbar,
+    #rising-sidebar::-webkit-scrollbar,
+    #rising-details::-webkit-scrollbar {
         width: 6px;
     }
     #levels-sidebar::-webkit-scrollbar-thumb,
-    #level-details::-webkit-scrollbar-thumb {
+    #level-details::-webkit-scrollbar-thumb,
+    #rising-sidebar::-webkit-scrollbar-thumb,
+    #rising-details::-webkit-scrollbar-thumb {
         background: var(--border);
         border-radius: var(--radius-sm);
     }
     #levels-sidebar::-webkit-scrollbar-thumb:hover,
-    #level-details::-webkit-scrollbar-thumb:hover {
+    #level-details::-webkit-scrollbar-thumb:hover,
+    #rising-sidebar::-webkit-scrollbar-thumb:hover,
+    #rising-details::-webkit-scrollbar-thumb:hover {
         background: var(--text-muted);
     }
     
     #levels-sidebar.mobile-hidden  { display: none !important; }
     #level-details.mobile-active   { display: block !important; }
+    #rising-sidebar.mobile-hidden  { display: none !important; }
+    #rising-details.mobile-active  { display: block !important; }
     #mobile-back-btn.visible       { display: flex; }
 
     #tab-roulette { height: auto !important; overflow: visible !important; }
@@ -286,12 +317,22 @@
     }
 
     .card { padding: var(--space-4) !important; }
-    #level-details h1 { font-size: 1.6rem !important; }
+    #level-details h1,
+    #rising-details h1 { font-size: 1.6rem !important; }
     .level-card:hover { transform: none !important; }
     .btn { min-height: 38px; min-width: 44px; }
 
     .level-search-container {
         margin-bottom: 10px;
+    }
+
+    .rising-leaderboard-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .rising-leaderboard-hero .legacy-toggle-btn {
+        margin-left: 0;
     }
 
     .level-search-input {
@@ -407,7 +448,8 @@
     :root { --nav-height: 60px; }
     .nav__logo span { font-size: 1.1rem !important; }
     .main-content.active { padding-inline: var(--space-2) !important; }
-    #level-details h1 { font-size: 1.35rem !important; }
+    #level-details h1,
+    #rising-details h1 { font-size: 1.35rem !important; }
     .lb-card { padding: var(--space-2) var(--space-3); gap: var(--space-2); }
     .lb-card__name { font-size: var(--font-sm); }
     .lb-card__pts  { font-size: var(--font-sm); }

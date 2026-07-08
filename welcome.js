@@ -39,9 +39,16 @@ Solamente se mete los RECORDS de las personas activas y que tengan el rol FRAKA 
             url: 'https://aredl.net/',
             imagen: 'assets/img/AREDL.webp',
             descripcion: 'The All Rated Extreme Demons List (AREDL).',
+        },
+        {
+            nombre: 'Insane Demon List',
+            url: 'https://insanedemonlist.com/',
+            imagen: 'assets/img/idl.ico',
+            descripcion: 'The Official Demonlist that has insane demons ranked based on difficulty!',
         }
     ],
 };
+
 
 // ══════════════════════════════════════════════════════════════════════════════
 //  RENDERIZADO — no necesitás editar nada debajo de esta línea

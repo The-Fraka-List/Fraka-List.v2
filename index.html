@@ -15,7 +15,7 @@
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             background-color: var(--bg-base);
             color: var(--text-primary);
             display: flex;
@@ -113,6 +113,7 @@
             
             <div class="nav__links">
                 <button class="nav__link-btn" data-route="list">List</button>
+                <button class="nav__link-btn" data-route="rising">Rising</button>
                 <button class="nav__link-btn" data-route="leaderboard">Leaderboard</button>
                 <button class="nav__link-btn" data-route="roulette">Roulette</button>
                 <button class="nav__link-btn" data-route="frk-dm">FRK-DM</button>
@@ -160,6 +161,41 @@
                 </div>
                 
                 <div class="level-detail-panel" id="level-details"></div>
+            </div>
+        </section>
+
+        <section id="tab-rising" class="main-content">
+            <div class="rising-view-shell">
+                <div class="list-layout">
+                    <div class="sidebar-list-wrapper">
+
+                        <div class="level-search-container">
+                            <input
+                                type="text"
+                                id="rising-search"
+                                placeholder="Buscar nivel..."
+                                class="level-search-input"
+                            >
+                            <button
+                                type="button"
+                                id="rising-view-toggle"
+                                class="legacy-toggle-btn"
+                                aria-pressed="false"
+                                aria-label="Alternar entre la lista y la leaderboard de Rising"
+                            >
+                                <span class="legacy-toggle-track"><span class="legacy-toggle-thumb"></span></span>
+                                <span class="legacy-toggle-label">Leader</span>
+                            </button>
+                        </div>
+
+                        <div class="sidebar-list" id="rising-sidebar"></div>
+
+                    </div>
+
+                    <div class="level-detail-panel" id="rising-details"></div>
+                </div>
+
+                <div id="rising-leaderboard-container" class="rising-leaderboard-container" style="display:none;"></div>
             </div>
         </section>
 

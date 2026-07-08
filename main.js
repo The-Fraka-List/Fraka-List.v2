@@ -3,6 +3,14 @@ let globalLeaderboard = [];
 let legacyMode = false;
 let currentDetailLevelId = null;
 
+// Estado propio de RISING: mismo patrón que List, sin legacyMode (RISING no
+// tiene distinción Top 150+ y puede superar los 150 niveles sin problema).
+let globalRisingLevels = [];
+let currentRisingDetailId = null;
+// El interruptor en RISING no controla Legacy (no existe en este apartado):
+// alterna entre la lista de niveles y la leaderboard propia de RISING.
+let risingLeaderboardVisible = false;
+
 // Top 1-150 = vista principal, Top 151+ = vista Legacy (oculta por defecto, pero ya cargada)
 const LEGACY_THRESHOLD = 150;
 
@@ -67,6 +75,65 @@ function toggleLegacyMode() {
     }
 }
 
+// Helper: fuerza display con !important vía JS, necesario porque mobile.css
+// define '.list-layout { display: block !important; }' dentro de un media
+// query — un inline-style sin !important no podría ocultarlo en mobile.
+// value === null restaura el display por defecto (el que decida el CSS).
+function setDisplayImportant(el, value) {
+    if (!el) return;
+    if (value === null) el.style.removeProperty('display');
+    else el.style.setProperty('display', value, 'important');
+}
+
+// Interruptor exclusivo de RISING: alterna entre la lista (sidebar+detalle)
+// y la leaderboard propia de RISING. No comparte nada con toggleLegacyMode;
+// LIST sigue usando su propio interruptor sin ningún cambio.
+function toggleRisingView() {
+    risingLeaderboardVisible = !risingLeaderboardVisible;
+
+    const listLayout = document.querySelector('#tab-rising .list-layout');
+    const lbContainer = document.getElementById('rising-leaderboard-container');
+    const toggleBtn = document.getElementById('rising-view-toggle');
+    const label = toggleBtn ? toggleBtn.querySelector('.legacy-toggle-label') : null;
+    const listControls = document.querySelector('#tab-rising .level-search-container');
+    const leaderboardHero = lbContainer ? lbContainer.querySelector('.rising-leaderboard-hero') : null;
+
+    if (risingLeaderboardVisible) {
+        setDisplayImportant(listLayout, 'none');
+        setDisplayImportant(lbContainer, 'flex');
+        lbContainer?.classList.add('active');
+        if (label) label.textContent = 'Rising';
+        if (listControls && toggleBtn && listControls.contains(toggleBtn)) {
+            listControls.removeChild(toggleBtn);
+        }
+        if (leaderboardHero && toggleBtn && !leaderboardHero.contains(toggleBtn)) {
+            leaderboardHero.appendChild(toggleBtn);
+        }
+        if (listControls) {
+            listControls.classList.add('is-hidden');
+        }
+    } else {
+        setDisplayImportant(listLayout, null);
+        setDisplayImportant(lbContainer, 'none');
+        lbContainer?.classList.remove('active');
+        if (label) label.textContent = 'Leader';
+        if (leaderboardHero && toggleBtn && leaderboardHero.contains(toggleBtn)) {
+            leaderboardHero.removeChild(toggleBtn);
+        }
+        if (listControls && toggleBtn && !listControls.contains(toggleBtn)) {
+            listControls.appendChild(toggleBtn);
+        }
+        if (listControls) {
+            listControls.classList.remove('is-hidden');
+        }
+    }
+
+    if (toggleBtn) {
+        toggleBtn.classList.toggle('active', risingLeaderboardVisible);
+        toggleBtn.setAttribute('aria-pressed', String(risingLeaderboardVisible));
+    }
+}
+
 // Sistema de puntos: Top 1 = 500.00, Top 150 = 14.50, curva exponencial progresiva
 // entre medio, y 0.01 fijo para cualquier posición fuera del Top 150.
 function getMaxPointsForPosition(topPosition) {
@@ -99,49 +166,11 @@ function copyToClipboard(text) {
     });
 }
 
-// Centraliza la navegación leyendo directamente el hash de la URL
-function switchTabByHash() {
-    const rawHash = window.location.hash.replace('#', '');
-
-    // Sin hash en la URL → pantalla de bienvenida.
-    // Con cualquier hash válido → sección correspondiente.
-    const hash = rawHash || 'welcome';
-    
-    // Mapeo de hashes a los IDs de las secciones <section>
-    const routes = {
-        'welcome':     'tab-welcome',
-        'list':        'tab-list',
-        'leaderboard': 'tab-leaderboard',
-        'roulette':    'tab-roulette',
-        'frk-dm':      'tab-frk-dm',
-        'challenges':  'tab-frk-dm' // Soporte por si decides usar #challenges para la sección FRK-DM
-    };
-    
-    const targetTabId = routes[hash] || 'tab-welcome';
-    const targetRouteName = (hash === 'challenges') ? 'frk-dm' : (routes[hash] ? hash : 'welcome');
-
-    // Desactivar visualmente todas las secciones y botones
-    document.querySelectorAll('.main-content').forEach(section => {
-        section.classList.remove('active');
-    });
-    document.querySelectorAll('.nav__link-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    // Activar la sección correspondiente
-    const targetSection = document.getElementById(targetTabId);
-    if (targetSection) {
-        targetSection.classList.add('active');
-    }
-
-    // Activar el botón del menú correspondiente usando el data-route
-    const targetBtn = document.querySelector(`.nav__link-btn[data-route="${targetRouteName}"]`);
-    if (targetBtn) {
-        targetBtn.classList.add('active');
-    }
-}
-
 // ── SISTEMA DE ENRUTAMIENTO DINÁMICO Y ESCALABLE ──────────────────────
+// Router único: antes existía también switchTabByHash() con un mapa de rutas
+// hardcodeado en paralelo a este. Se eliminó por duplicar exactamente esta
+// misma responsabilidad; handleHashRouting() ya es genérico (tab-${route})
+// y no requiere tocarse para agregar nuevos apartados como RISING.
 
 function handleHashRouting() {
     // 1. Extraer el identificador del hash actual (ej: '#roulette' -> 'roulette')
@@ -206,125 +235,151 @@ document.addEventListener('DOMContentLoaded', () => {
     handleHashRouting();     // Evalúa el hash con el que se abrió la página originalmente
 });
 
+// ── Loader genérico de niveles ────────────────────────────────────────
+// Reutilizado por List (carpetaDatos = 'data-lvl') y por RISING
+// (carpetaDatos = 'data-rising'). Aplica los mismos baneos globales de
+// jugadores/niveles (_baneos.json / _lvl_baneos.json) y la misma detección
+// de bugs que ya existía para List, sin duplicar esa lógica por sección.
+async function cargarNivelesConBaneos(carpetaDatos, archivoIndice) {
+    // A) Cargar lista de jugadores baneados desde _baneos.json
+    // Si el archivo no existe o falla, se continúa sin baneos (array vacío).
+    let jugadoresBaneados = [];
+    try {
+        const resBaneos = await fetch('_baneos.json');
+        if (resBaneos.ok) {
+            jugadoresBaneados = await resBaneos.json();
+        }
+    } catch (baneoErr) {
+        console.warn('No se pudo cargar _baneos.json, se omiten baneos.', baneoErr);
+    }
+
+    // B) Cargar lista de niveles baneados desde _lvl_baneos.json
+    // Si el archivo no existe o falla, se continua sin baneos de niveles.
+    let nivelesBaneados = [];
+    try {
+        const resLvlBaneos = await fetch('_lvl_baneos.json');
+        if (resLvlBaneos.ok) {
+            nivelesBaneados = await resLvlBaneos.json();
+        }
+    } catch (lvlBaneoErr) {
+        console.warn('No se pudo cargar _lvl_baneos.json, se omiten baneos de niveles.', lvlBaneoErr);
+    }
+
+    // C) Leer el índice maestro de niveles y filtrar los baneados
+    // El filtro ocurre ANTES de iterar, por lo que el rank (index + 1)
+    // se reasigna automaticamente: si se baneó el top 5, el top 6 pasa a ser top 5.
+    // La comparacion es exacta (case-sensitive), igual que en _baneos.json.
+    const resListIndex = await fetch(`${carpetaDatos}/${archivoIndice}`);
+    const listaNombresRaw = await resListIndex.json();
+    const listaNombres = nivelesBaneados.length > 0
+        ? listaNombresRaw.filter(nombre => !nivelesBaneados.includes(nombre.trim()))
+        : listaNombresRaw;
+
+    const bugs = [];
+
+    const promesasNiveles = listaNombres.map(async (nombreArchivo, index) => {
+        try {
+            const resNivel = await fetch(`${carpetaDatos}/${nombreArchivo}.json`);
+            if (!resNivel.ok) throw new Error(`No se pudo cargar ${nombreArchivo}.json`);
+            const datosNivel = await resNivel.json();
+
+            if (!datosNivel.id || !datosNivel.name) {
+                bugs.push({
+                    file: `${carpetaDatos}/${nombreArchivo}.json`,
+                    reason: 'Falta "id" o "name" en el archivo (se usaron valores de respaldo para la leaderboard).'
+                });
+// Asignamos datos mínimos de respaldo para que la leaderboard pueda leer los récords sin romperse
+                if (!datosNivel.id) datosNivel.id = `id_${nombreArchivo}`;
+                if (!datosNivel.name) datosNivel.name = nombreArchivo;
+            }
+
+            datosNivel.rank = index + 1;
+            datosNivel._file = `${carpetaDatos}/${nombreArchivo}.json`;
+
+            // El bug check usa el conteo ORIGINAL del JSON, antes de aplicar baneos.
+            // Así solo reporta bug si el nivel genuinamente no tiene records,
+            // y no confunde un nivel con todos sus records baneados como un nivel vacío.
+            const recordsOriginales = Array.isArray(datosNivel.records) ? datosNivel.records.length : 0;
+            if (recordsOriginales === 0) {
+                bugs.push({
+                    file: `${carpetaDatos}/${nombreArchivo}.json`,
+                    reason: `${nombreArchivo}.json no tiene un record registrado.`
+                });
+            }
+
+            // Filtrar records de jugadores baneados (comparación exacta, case-sensitive)
+            // Se opera sobre el objeto en memoria; el archivo JSON original no se toca.
+            if (Array.isArray(datosNivel.records) && jugadoresBaneados.length > 0) {
+                datosNivel.records = datosNivel.records.filter(
+                    rec => !jugadoresBaneados.includes(rec.user)
+                );
+            }
+
+            return datosNivel;
+        } catch (err) {
+            console.warn(`Error al cargar el nivel individual: ${carpetaDatos}/${nombreArchivo}`, err);
+            bugs.push({
+                file: `${carpetaDatos}/${nombreArchivo}.json`,
+                reason: 'Código mal ejecutado o archivo no encontrado.'
+            });
+            return null;
+        }
+    });
+
+    const nivelesCargados = await Promise.all(promesasNiveles);
+    const niveles = nivelesCargados.filter(n => n !== null);
+
+    // Detección de IDs duplicadas entre los niveles cargados correctamente,
+    // acotada a este dataset (List y RISING se validan cada uno por separado).
+    const idMap = {};
+    niveles.forEach(nivel => {
+        if (!idMap[nivel.id]) idMap[nivel.id] = [];
+        idMap[nivel.id].push(nivel);
+    });
+    Object.values(idMap).forEach(grupo => {
+        if (grupo.length > 1) {
+            grupo.forEach(nivel => {
+                const otros = grupo.filter(n => n !== nivel).map(n => n._file).join(', ');
+                bugs.push({
+                    file: nivel._file,
+                    reason: `ID duplicada (${nivel.id}), compartida con ${otros}.`
+                });
+            });
+        }
+    });
+
+    return { niveles, bugs };
+}
+
 async function inicializarSitio() {
     try {
-        // A) Cargar lista de jugadores baneados desde _baneos.json
-        // Si el archivo no existe o falla, se continúa sin baneos (array vacío).
-        let jugadoresBaneados = [];
-        try {
-            const resBaneos = await fetch('_baneos.json');
-            if (resBaneos.ok) {
-                jugadoresBaneados = await resBaneos.json();
-            }
-        } catch (baneoErr) {
-            console.warn('No se pudo cargar _baneos.json, se omiten baneos.', baneoErr);
-        }
+        const resultadoList = await cargarNivelesConBaneos('data-lvl', '_list.json');
+        globalLevels = resultadoList.niveles;
+        let bugs = resultadoList.bugs;
 
-        // B) Cargar lista de niveles baneados desde _lvl_baneos.json
-        // Si el archivo no existe o falla, se continua sin baneos de niveles.
-        let nivelesBaneados = [];
-        try {
-            const resLvlBaneos = await fetch('_lvl_baneos.json');
-            if (resLvlBaneos.ok) {
-                nivelesBaneados = await resLvlBaneos.json();
-            }
-        } catch (lvlBaneoErr) {
-            console.warn('No se pudo cargar _lvl_baneos.json, se omiten baneos de niveles.', lvlBaneoErr);
-        }
-
-        // C) Leer el índice maestro de niveles y filtrar los baneados
-        // El filtro ocurre ANTES de iterar, por lo que el rank (index + 1)
-        // se reasigna automaticamente: si se baneó el top 5, el top 6 pasa a ser top 5.
-        // La comparacion es exacta (case-sensitive), igual que en _baneos.json.
-        const resListIndex = await fetch('data-lvl/_list.json');
-        const listaNombresRaw = await resListIndex.json();
-        const listaNombres = nivelesBaneados.length > 0
-            ? listaNombresRaw.filter(nombre => !nivelesBaneados.includes(nombre.trim()))
-            : listaNombresRaw;
-
-        const bugs = [];
-
-        const promesasNiveles = listaNombres.map(async (nombreArchivo, index) => {
-            try {
-                const resNivel = await fetch(`data-lvl/${nombreArchivo}.json`);
-                if (!resNivel.ok) throw new Error(`No se pudo cargar ${nombreArchivo}.json`);
-                const datosNivel = await resNivel.json();
-
-                if (!datosNivel.id || !datosNivel.name) {
-                    bugs.push({
-                        file: `${nombreArchivo}.json`,
-                        reason: 'Falta "id" o "name" en el archivo (se usaron valores de respaldo para la leaderboard).'
-                    });
-    // Asignamos datos mínimos de respaldo para que la leaderboard pueda leer los récords sin romperse
-                    if (!datosNivel.id) datosNivel.id = `id_${nombreArchivo}`;
-                    if (!datosNivel.name) datosNivel.name = nombreArchivo;
-                }
-
-                datosNivel.rank = index + 1;
-                datosNivel._file = `${nombreArchivo}.json`;
-
-                // El bug check usa el conteo ORIGINAL del JSON, antes de aplicar baneos.
-                // Así solo reporta bug si el nivel genuinamente no tiene records,
-                // y no confunde un nivel con todos sus records baneados como un nivel vacío.
-                const recordsOriginales = Array.isArray(datosNivel.records) ? datosNivel.records.length : 0;
-                if (recordsOriginales === 0) {
-                    bugs.push({
-                        file: `${nombreArchivo}.json`,
-                        reason: `${nombreArchivo}.json no tiene un record registrado.`
-                    });
-                }
-
-                // C) Filtrar records de jugadores baneados (comparación exacta, case-sensitive)
-                // Se opera sobre el objeto en memoria; el archivo JSON original no se toca.
-                if (Array.isArray(datosNivel.records) && jugadoresBaneados.length > 0) {
-                    datosNivel.records = datosNivel.records.filter(
-                        rec => !jugadoresBaneados.includes(rec.user)
-                    );
-                }
-
-                return datosNivel;
-            } catch (err) {
-                console.warn(`Error al cargar el nivel individual: ${nombreArchivo}`, err);
-                bugs.push({
-                    file: `${nombreArchivo}.json`,
-                    reason: 'Código mal ejecutado o archivo no encontrado.'
-                });
-                return null;
-            }
-        });
-
-        const nivelesCargados = await Promise.all(promesasNiveles);
-        globalLevels = nivelesCargados.filter(n => n !== null);
-
-        // Detección de IDs duplicadas entre los niveles cargados correctamente
-        const idMap = {};
-        globalLevels.forEach(nivel => {
-            if (!idMap[nivel.id]) idMap[nivel.id] = [];
-            idMap[nivel.id].push(nivel);
-        });
-        Object.values(idMap).forEach(grupo => {
-            if (grupo.length > 1) {
-                grupo.forEach(nivel => {
-                    const otros = grupo.filter(n => n !== nivel).map(n => n._file).join(', ');
-                    bugs.push({
-                        file: nivel._file,
-                        reason: `ID duplicada (${nivel.id}), compartida con ${otros}.`
-                    });
-                });
-            }
-        });
+        const resultadoRising = await cargarNivelesConBaneos('data-rising', '_list.json');
+        globalRisingLevels = resultadoRising.niveles;
+        bugs = bugs.concat(resultadoRising.bugs);
 
         renderBugTab(bugs);
 
-        renderLeaderboard();
+        renderLeaderboard(globalLevels, 'leaderboard-container', 'leaderboardPlayers');
+        renderLeaderboard(globalRisingLevels, 'rising-leaderboard-container', 'risingLeaderboardPlayers');
 
         renderSidebar();
+        renderRisingSidebar();
 
         const searchInput = document.getElementById('level-search');
-
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 filterLevels(e.target.value);
+            });
+        }
+
+        const risingSearchInput = document.getElementById('rising-search');
+        if (risingSearchInput) {
+            risingSearchInput.addEventListener('input', (e) => {
+                filterRisingLevels(e.target.value);
             });
         }
 
@@ -333,15 +388,24 @@ async function inicializarSitio() {
             legacyToggleBtn.addEventListener('click', toggleLegacyMode);
         }
 
+        const risingViewToggleBtn = document.getElementById('rising-view-toggle');
+        if (risingViewToggleBtn) {
+            risingViewToggleBtn.addEventListener('click', toggleRisingView);
+        }
+
         if (globalLevels.length > 0) {
             mostrarDetallesNivel(globalLevels[0].id);
+        }
+
+        if (globalRisingLevels.length > 0) {
+            mostrarDetalleRising(globalRisingLevels[0].id);
         }
 
         // Inicializar la sección FRK-DM
         await inicializarFrkDm();
 
     } catch (error) {
-        console.error("Error crítico al inicializar la estructura dinámica data-lvl:", error);
+        console.error("Error crítico al inicializar la estructura dinámica data-lvl/data-rising:", error);
     }
 }
 
@@ -370,24 +434,27 @@ function toggleBugTab() {
     if (tabEl) tabEl.classList.toggle('open');
 }
 
-function renderSidebar() {
-    const sidebar = document.getElementById('levels-sidebar');
+// ── Núcleo genérico de sidebar (List y RISING comparten esta función) ──
+// idPrefix distingue los IDs de card entre secciones (sidebar-item- vs
+// rising-sidebar-item-) para que no colisionen si algún día un nivel
+// aparece con el mismo id en ambos datasets.
+function renderNivelesEnSidebar(niveles, sidebarElId, idPrefix, onClickFn) {
+    const sidebar = document.getElementById(sidebarElId);
+    if (!sidebar) return;
     sidebar.innerHTML = '';
 
-    const nivelesVisibles = getVisibleLevels(globalLevels);
-
-    nivelesVisibles.forEach(nivel => {
+    niveles.forEach(nivel => {
         const item = document.createElement('div');
-        item.className = 'card level-card'; 
-        item.id = `sidebar-item-${nivel.id}`;
+        item.className = 'card level-card';
+        item.id = `${idPrefix}${nivel.id}`;
         item.style.marginBottom = 'var(--space-3)';
         item.style.cursor = 'pointer';
         item.style.display = 'flex';
         item.style.alignItems = 'center';
         item.style.gap = 'var(--space-4)';
         item.style.padding = 'var(--space-4)';
-        
-        item.onclick = () => mostrarDetallesNivel(nivel.id);
+
+        item.onclick = () => onClickFn(nivel.id);
 
         item.innerHTML = `
             <div class="text-accent text-mono" style="font-size: 1.3rem; font-weight: 700; min-width: 45px;">#${nivel.rank}</div>
@@ -400,14 +467,10 @@ function renderSidebar() {
     });
 }
 
-function filterLevels(searchTerm) {
-    const sidebar = document.getElementById('levels-sidebar');
-
-    sidebar.innerHTML = '';
-
+function filtrarNivelesEnSidebar(niveles, searchTerm, sidebarElId, idPrefix, onClickFn) {
     const term = searchTerm.toLowerCase().trim();
 
-    const filteredLevels = getVisibleLevels(globalLevels).filter(level => {
+    const filteredLevels = niveles.filter(level => {
         if (level.name.toLowerCase().includes(term)) return true;
         if (level.author && level.author.toLowerCase().includes(term)) return true;
         if (level.verifier && level.verifier.toLowerCase().includes(term)) return true;
@@ -416,54 +479,54 @@ function filterLevels(searchTerm) {
         return false;
     });
 
-    filteredLevels.forEach(nivel => {
-        const item = document.createElement('div');
+    renderNivelesEnSidebar(filteredLevels, sidebarElId, idPrefix, onClickFn);
+}
 
-        item.className = 'card level-card';
-        item.id = `sidebar-item-${nivel.id}`;
+function renderSidebar() {
+    renderNivelesEnSidebar(getVisibleLevels(globalLevels), 'levels-sidebar', 'sidebar-item-', mostrarDetallesNivel);
+}
 
-        item.style.marginBottom = 'var(--space-3)';
-        item.style.cursor = 'pointer';
-        item.style.display = 'flex';
-        item.style.alignItems = 'center';
-        item.style.gap = 'var(--space-4)';
-        item.style.padding = 'var(--space-4)';
+function filterLevels(searchTerm) {
+    filtrarNivelesEnSidebar(getVisibleLevels(globalLevels), searchTerm, 'levels-sidebar', 'sidebar-item-', mostrarDetallesNivel);
+}
 
-        item.onclick = () => mostrarDetallesNivel(nivel.id);
+function renderRisingSidebar() {
+    renderNivelesEnSidebar(globalRisingLevels, 'rising-sidebar', 'rising-sidebar-item-', mostrarDetalleRising);
+}
 
-        item.innerHTML = `
-            <div class="text-accent text-mono"
-                 style="font-size:1.3rem;font-weight:700;min-width:45px;">
-                 #${nivel.rank}
-            </div>
-
-            <div style="flex:1;">
-                <div class="text-display"
-                     style="font-weight:600;font-size:1.15rem;color:var(--text-primary);line-height:1.2;">
-                     ${nivel.name}
-                </div>
-
-                <div style="font-size:0.85rem;color:var(--text-muted);margin-top:2px;">
-                    por ${nivel.author || nivel.creators[0]}
-                </div>
-            </div>
-        `;
-
-        sidebar.appendChild(item);
-    });
+function filterRisingLevels(searchTerm) {
+    filtrarNivelesEnSidebar(globalRisingLevels, searchTerm, 'rising-sidebar', 'rising-sidebar-item-', mostrarDetalleRising);
 }
 
 function mostrarDetallesNivel(idNivel) {
-    document.querySelectorAll('.level-card').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#levels-sidebar .level-card').forEach(el => el.classList.remove('active'));
     const activeItem = document.getElementById(`sidebar-item-${idNivel}`);
     if (activeItem) activeItem.classList.add('active');
 
     const nivel = globalLevels.find(n => n.id === idNivel);
-    const detailPanel = document.getElementById('level-details');
-
     if (!nivel) return;
 
     currentDetailLevelId = idNivel;
+    renderDetalleNivel(nivel, 'level-details');
+}
+
+function mostrarDetalleRising(idNivel) {
+    document.querySelectorAll('#rising-sidebar .level-card').forEach(el => el.classList.remove('active'));
+    const activeItem = document.getElementById(`rising-sidebar-item-${idNivel}`);
+    if (activeItem) activeItem.classList.add('active');
+
+    const nivel = globalRisingLevels.find(n => n.id === idNivel);
+    if (!nivel) return;
+
+    currentRisingDetailId = idNivel;
+    renderDetalleNivel(nivel, 'rising-details');
+}
+
+// Núcleo genérico de renderizado del panel de detalle, compartido por
+// List y RISING. Recibe el nivel ya resuelto y el ID del contenedor destino.
+function renderDetalleNivel(nivel, detailPanelId) {
+    const detailPanel = document.getElementById(detailPanelId);
+    if (!detailPanel) return;
 
     let youtubeId = "";
     if (nivel.verification) {
@@ -548,7 +611,7 @@ function mostrarDetallesNivel(idNivel) {
     `;
 }
 
-function openPlayerModal(playerData) {
+function openPlayerModal(playerData, storageKey = 'leaderboardPlayers') {
     // ── Easter Egg: TheGlaiCat audio (45% de probabilidad) ──
     if (playerData.name.trim().toLowerCase() === 'theglaicat' && Math.random() < 0.45) {
         const _cata = new Audio('assets/img/cata.mp3');
@@ -593,7 +656,7 @@ function openPlayerModal(playerData) {
         
         <div style="margin-top:var(--space-4);">
             <button
-                onclick="showCompletedLevels('${playerData.name}')"
+                onclick="showCompletedLevels('${playerData.name}', '${storageKey}')"
                 style="
                     width:100%;
                     padding:12px;
@@ -620,9 +683,9 @@ function closePlayerModal() {
     document.body.style.overflow = '';
 }
 
-function showCompletedLevels(playerName) {
+function showCompletedLevels(playerName, storageKey = 'leaderboardPlayers') {
 
-    const player = window.leaderboardPlayers.find(
+    const player = (window[storageKey] || []).find(
         p => p.name === playerName
     );
 
@@ -718,13 +781,18 @@ function showCompletedLevels(playerName) {
     document.getElementById('player-modal-content').innerHTML = html;
 }
 
-function renderLeaderboard() {
-    const container = document.getElementById('leaderboard-container');
+// containerId: dónde se pinta la tabla/cards. storageKey: nombre de la
+// propiedad en window donde se guarda el ranking calculado, usada luego por
+// openPlayerModal/showCompletedLevels para saber de qué dataset leer al
+// abrir el modal de un jugador. Por defecto reproduce el comportamiento
+// original de List ('leaderboard-container' / window.leaderboardPlayers).
+function renderLeaderboard(niveles = globalLevels, containerId = 'leaderboard-container', storageKey = 'leaderboardPlayers') {
+    const container = document.getElementById(containerId);
     if (!container) return;
 
     const playerRegistry = {};
 
-globalLevels.forEach(nivel => {
+niveles.forEach(nivel => {
     if (!nivel || !nivel.records || !Array.isArray(nivel.records)) return;
 
     const topPosition = nivel.rank;
@@ -778,23 +846,34 @@ globalLevels.forEach(nivel => {
 
     const rankedPlayers = Object.values(playerRegistry).sort((a, b) => b.points - a.points);
 
+    const isRisingLeaderboard = containerId === 'rising-leaderboard-container';
+    const emptyState = `
+        <div style="padding: var(--space-8); text-align: center; color: var(--text-muted); background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg);">
+            No se encontraron récords registrados en la lista todavía.
+        </div>`;
+
     if (rankedPlayers.length === 0) {
-        container.innerHTML = `
-            <div style="padding: var(--space-8); text-align: center; color: var(--text-muted); background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg);">
-                No se encontraron récords registrados en la lista todavía.
-            </div>`;
+        container.innerHTML = isRisingLeaderboard
+            ? `
+                <div class="rising-leaderboard-hero">
+                    <div class="rising-leaderboard-label">Leaderboard de Rising</div>
+                    <h1>Top Jugadores</h1>
+                </div>
+                <div class="rising-leaderboard-content">${emptyState}</div>
+            `
+            : emptyState;
         return;
     }
 
     // Store players globally for modal
-    window.leaderboardPlayers = rankedPlayers;
+    window[storageKey] = rankedPlayers;
 
     // MOBILE VERSION
     let htmlMobile = `<div class="leaderboard-mobile">`;
     rankedPlayers.forEach((player, idx) => {
         const rank = idx + 1;
         htmlMobile += `
-            <div class="leaderboard-mobile-row" onclick="openPlayerModal(window.leaderboardPlayers[${idx}])">
+            <div class="leaderboard-mobile-row" onclick="openPlayerModal(window.${storageKey}[${idx}], '${storageKey}')">
                 <div class="leaderboard-mobile-rank">#${rank}</div>
                 <div class="leaderboard-mobile-name">${player.name}</div>
                 <div class="leaderboard-mobile-arrow">→</div>
@@ -829,7 +908,7 @@ globalLevels.forEach(nivel => {
 
         htmlTable += `
             <tr
-                onclick='openPlayerModal(window.leaderboardPlayers[${idx}])'
+                onclick='openPlayerModal(window.${storageKey}[${idx}], "${storageKey}")'
                 style="border-bottom: 1px solid var(--border); transition: background var(--transition-fast); cursor: pointer;"
                 onmouseover="this.style.background='var(--bg-elevated)'"
                 onmouseout="this.style.background='transparent'">
@@ -850,7 +929,16 @@ globalLevels.forEach(nivel => {
 
     htmlTable += `</tbody></table></div></div>`;
 
-    container.innerHTML = htmlMobile + htmlTable;
+    const contentHtml = htmlMobile + htmlTable;
+    container.innerHTML = isRisingLeaderboard
+        ? `
+            <div class="rising-leaderboard-hero">
+                <div class="rising-leaderboard-label">Leaderboard de Rising</div>
+                <h1>Top Jugadores</h1>
+            </div>
+            <div class="rising-leaderboard-content">${contentHtml}</div>
+        `
+        : contentHtml;
 }
 
 const roulette = {
@@ -1142,8 +1230,9 @@ function rouletteToggleRemaining() {
 
 inicializarSitio();
 document.addEventListener('DOMContentLoaded', rouletteInit);
-// Escuchar cuando el usuario cambia el hash manualmente o usa las flechas del navegador
-window.addEventListener('hashchange', switchTabByHash);
 
-// Ejecutar inmediatamente al cargar el archivo para abrir la sección correcta si usan un enlace directo
-switchTabByHash();
+// Ejecutar inmediatamente al cargar el archivo para abrir la sección correcta
+// si usan un enlace directo. El listener de 'hashchange' que mantiene esto
+// sincronizado en cambios posteriores ya está registrado más arriba, junto
+// a handleHashRouting (único router del sitio).
+handleHashRouting();
