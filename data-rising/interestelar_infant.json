@@ -1,0 +1,18 @@
+{
+    "id": 65496280,
+    "name": "Interestelar Infant",
+    "author": "Fault",
+    "creators": ["Fault"],
+    "verifier": "Gilberto_Dash",
+    "verification": "https://www.youtube.com/watch?v=2X8YCnDacbI",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Gilberto_Dash",
+            "link": "https://www.youtube.com/watch?v=2X8YCnDacbI",
+            "percent": 100,
+            "hz": 140
+        }
+    ]
+}

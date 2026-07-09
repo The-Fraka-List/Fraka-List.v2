@@ -1,0 +1,18 @@
+{
+    "id": 58570720,
+    "name": "1929",
+    "author": "Lfritz",
+    "creators": ["Lfritz"],
+    "verifier": "Gilberto_Dash",
+    "verification": "https://www.youtube.com/watch?v=lSc_w6mb_20",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Gilberto_Dash",
+            "link": "https://www.youtube.com/watch?v=lSc_w6mb_20",
+            "percent": 100,
+            "hz": 140
+        }
+    ]
+}

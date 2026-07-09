@@ -1,0 +1,18 @@
+{
+    "id": 68042146,
+    "name": "Gregory",
+    "author": "CornFungi",
+    "creators": ["CornFungi"],
+    "verifier": "Gilberto_Dash",
+    "verification": "https://www.youtube.com/watch?v=l9oEm8SrWBE",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Gilberto_Dash",
+            "link": "https://www.youtube.com/watch?v=l9oEm8SrWBE",
+            "percent": 100,
+            "hz": 140
+        }
+    ]
+}
