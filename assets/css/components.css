@@ -278,7 +278,7 @@ html, body {
 
 #tab-rising .list-layout {
   min-height: 0;
-  height: 100%;
+  height: 100vh;
 }
 
 #tab-rising .level-detail-panel {
