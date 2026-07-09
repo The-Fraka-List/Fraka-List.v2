@@ -259,10 +259,12 @@ html, body {
    a los IDs propios de este apartado para no interferir con List ── */
 #rising-sidebar {
   height: 100% !important;
+  max-height: calc(100vh - var(--nav-height) - var(--space-16));
   overflow-y: auto !important;
   overflow-x: hidden;
   padding-right: var(--space-2);
   box-sizing: border-box;
+  min-height: 0;
 }
 
 #rising-details {
@@ -272,20 +274,23 @@ html, body {
   padding-right: var(--space-2);
   box-sizing: border-box;
   min-height: 0;
-  max-height: calc(100vh - var(--nav-height) - var(--space-8));
-}
-
-#rising-sidebar {
-  min-height: 0;
-  max-height: calc(100vh - var(--nav-height) - var(--space-8));
 }
 
 #tab-rising .list-layout {
   min-height: 0;
+  height: 100%;
 }
 
 #tab-rising .level-detail-panel {
   min-height: 0;
+  height: 100%;
+}
+
+.rising-view-shell {
+  position: relative;
+  height: 100vh;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 #rising-sidebar::-webkit-scrollbar,
