@@ -1,0 +1,18 @@
+{
+    "id": 71216292,
+    "name": "Kuzureta",
+    "author": "Teno",
+    "creators": ["Teno"],
+    "verifier": "AleezCourtz",
+    "verification": "https://www.youtube.com/watch?v=wj-beDk7BME",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "AleezCourtz",
+            "link": "https://www.youtube.com/watch?v=wj-beDk7BME",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
