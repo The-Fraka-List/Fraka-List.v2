@@ -7,18 +7,24 @@
     "verification": "https://www.youtube.com/watch?v=O_ue0-5vwEs",
     "percentToQualify": "100",
     "password": "Free To Copy",
-    "records": [
-        {
-            "user": "TheGlaiCat",
-            "link": "https://www.youtube.com/watch?v=O_ue0-5vwEs",
-            "percent": 100,
-            "hz": 60
-        },
-                {
-            "user": "xReizer",
-            "link": "https://www.youtube.com/watch?v=4UqsTbsmMP0",
-            "percent": 100,
-            "hz": 120
-        }
-    ]
+"records": [
+  {
+    "user": "TheGlaiCat",
+    "link": "https://www.youtube.com/watch?v=O_ueO-5vwEs",
+    "percent": 100,
+    "hz": 60
+  },
+  {
+    "user": "xReizer",
+    "link": "https://www.youtube.com/watch?v=4UqsTbsmMP0",
+    "percent": 100,
+    "hz": 120
+  },
+  {
+    "user": "NotSparture",
+    "link": "https://youtu.be/Gumr6CKLkdQ",
+    "percent": 100,
+    "hz": 60
+  }
+]
 }
