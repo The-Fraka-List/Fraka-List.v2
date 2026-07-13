@@ -434,6 +434,32 @@ function toggleBugTab() {
     if (tabEl) tabEl.classList.toggle('open');
 }
 
+function getCreatorList(creators, author) {
+    if (Array.isArray(creators)) {
+        return creators.filter(Boolean);
+    }
+
+    if (typeof creators === 'string' && creators.trim()) {
+        return [creators.trim()];
+    }
+
+    if (typeof author === 'string' && author.trim()) {
+        return [author.trim()];
+    }
+
+    return [];
+}
+
+function getCreatorDisplay(creators, author) {
+    const creatorsList = getCreatorList(creators, author);
+    return creatorsList.length > 0 ? creatorsList.join(', ') : 'Desconocido';
+}
+
+function getCreatorPrimary(creators, author) {
+    const creatorsList = getCreatorList(creators, author);
+    return creatorsList[0] || author || 'Desconocido';
+}
+
 // ── Núcleo genérico de sidebar (List y RISING comparten esta función) ──
 // idPrefix distingue los IDs de card entre secciones (sidebar-item- vs
 // rising-sidebar-item-) para que no colisionen si algún día un nivel
@@ -460,7 +486,7 @@ function renderNivelesEnSidebar(niveles, sidebarElId, idPrefix, onClickFn) {
             <div class="text-accent text-mono" style="font-size: 1.3rem; font-weight: 700; min-width: 45px;">#${nivel.rank}</div>
             <div style="flex: 1;">
                 <div class="text-display" style="font-weight: 600; font-size: 1.15rem; color: var(--text-primary); line-height: 1.2;">${nivel.name}</div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">por ${nivel.author || nivel.creators[0]}</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">por ${getCreatorPrimary(nivel.creators, nivel.author)}</div>
             </div>
         `;
         sidebar.appendChild(item);
@@ -474,7 +500,7 @@ function filtrarNivelesEnSidebar(niveles, searchTerm, sidebarElId, idPrefix, onC
         if (level.name.toLowerCase().includes(term)) return true;
         if (level.author && level.author.toLowerCase().includes(term)) return true;
         if (level.verifier && level.verifier.toLowerCase().includes(term)) return true;
-        if (level.creators && level.creators.some(c => c.toLowerCase().includes(term))) return true;
+        if (getCreatorList(level.creators, level.author).some(c => c.toLowerCase().includes(term))) return true;
         if (level.records && level.records.some(r => r.user && r.user.toLowerCase().includes(term))) return true;
         return false;
     });
@@ -528,6 +554,8 @@ function renderDetalleNivel(nivel, detailPanelId) {
     const detailPanel = document.getElementById(detailPanelId);
     if (!detailPanel) return;
 
+    const autoresTexto = getCreatorDisplay(nivel.creators, nivel.author);
+
     let youtubeId = "";
     if (nivel.verification) {
         if (nivel.verification.includes("v=")) {
@@ -568,7 +596,7 @@ function renderDetalleNivel(nivel, detailPanelId) {
             <div style="margin-bottom: var(--space-4);">
                 <h1 class="text-display" style="font-size: 2.5rem; margin: 0; font-weight: 700; color: var(--text-primary);">${nivel.name}</h1>
                 <p style="font-size: 0.95rem; color: var(--text-secondary); margin: var(--space-1) 0 0 0;">
-                    Creado por <span class="text-accent" style="font-weight: 600;">${nivel.creators ? nivel.creators.join(', ') : nivel.author}</span> — Verificado por <span class="text-cyan" style="font-weight: 600;">${nivel.verifier}</span>
+                    Creado por <span class="text-accent" style="font-weight: 600;">${autoresTexto}</span> — Verificado por <span class="text-cyan" style="font-weight: 600;">${nivel.verifier}</span>
                 </p>
             </div>
 
