@@ -1,0 +1,272 @@
+/* ── Herramienta oculta: Generador de JSON (#frk-mod-list) ───────────────
+   Ruta sin enlace ni botón visible en ningún menú. Se accede únicamente
+   escribiendo el hash a mano en la URL. Este archivo solo añade reglas
+   nuevas; no modifica selectores de nav.css/components.css existentes. ── */
+
+/* La clase .mod-list-active la asigna assets/js/mod-list.js sobre <body>
+   cuando el hash activo es 'frk-mod-list'. Con ella, ocultamos toda la
+   navegación y demás elementos flotantes de la interfaz principal. */
+body.mod-list-active .nav {
+    display: none;
+}
+
+body.mod-list-active .bug-tab {
+    display: none !important;
+}
+
+body.mod-list-active .player-modal {
+    display: none !important;
+}
+
+/* El contenedor principal ya no necesita el ancho ni el padding pensados
+   para las demás secciones: la herramienta ocupa su propio layout. */
+body.mod-list-active .container {
+    max-width: none;
+    padding: 0;
+}
+
+/* ── Vista de la herramienta ── */
+#tab-frk-mod-list.modlist-view {
+    height: 100vh;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    background: var(--bg-base);
+}
+
+#tab-frk-mod-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#tab-frk-mod-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: var(--radius-sm);
+}
+
+#tab-frk-mod-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+.modlist-shell {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: var(--space-16) var(--space-6) var(--space-12);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    box-sizing: border-box;
+}
+
+.modlist-header {
+    text-align: center;
+}
+
+.modlist-title {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    letter-spacing: 0.02em;
+    margin: 0 0 var(--space-2) 0;
+    color: var(--text-primary);
+}
+
+.modlist-subtitle {
+    font-size: var(--font-base);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.modlist-toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.modlist-form {
+    background: linear-gradient(180deg, var(--bg-surface) 0%, #0d0d0d 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    min-height: 320px;
+    padding: var(--space-6);
+    box-sizing: border-box;
+}
+
+/* ── Formulario ── */
+.modlist-fieldset {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    margin: 0 0 var(--space-6) 0;
+}
+
+.modlist-fieldset:last-of-type {
+    margin-bottom: 0;
+}
+
+.modlist-legend {
+    font-family: var(--font-display);
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-light);
+    padding: 0 var(--space-2);
+}
+
+.modlist-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-bottom: var(--space-4);
+}
+
+.modlist-field:last-child {
+    margin-bottom: 0;
+}
+
+.modlist-label {
+    font-family: var(--font-display);
+    font-size: var(--font-xs);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.modlist-input {
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3) var(--space-4);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: var(--font-base);
+    box-sizing: border-box;
+    width: 100%;
+    transition: border-color var(--transition-fast);
+}
+
+.modlist-input:focus {
+    outline: none;
+    border-color: var(--accent-light);
+}
+
+.modlist-input--invalid {
+    border-color: #e04343;
+}
+
+.modlist-input--invalid:focus {
+    border-color: #e04343;
+}
+
+.modlist-input::placeholder {
+    color: var(--text-muted);
+}
+
+.modlist-add-btn {
+    margin-top: var(--space-4);
+    width: 100%;
+}
+
+/* Creators */
+.modlist-creators-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.modlist-creator-row {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+}
+
+.modlist-creator-row .modlist-input {
+    flex: 1;
+}
+
+/* Records */
+.modlist-records-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.modlist-record {
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.modlist-record__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+}
+
+.modlist-record__label {
+    font-family: var(--font-display);
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.modlist-record__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+/* Botón "×" para quitar filas/records */
+.modlist-remove-btn {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.modlist-remove-btn:hover {
+    background: var(--accent);
+    color: var(--text-primary);
+    border-color: var(--accent-light);
+}
+
+.modlist-remove-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.modlist-remove-btn:disabled:hover {
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    border-color: var(--border);
+}
+
+@media (max-width: 768px) {
+    .modlist-shell {
+        padding: var(--space-8) var(--space-4) var(--space-8);
+    }
+    .modlist-title {
+        font-size: 2rem;
+    }
+    .modlist-record__grid {
+        grid-template-columns: 1fr;
+    }
+}
