@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="assets/css/mobile.css">
     <link rel="icon" href="assets/img/favicon.png" type="image/png">
     <link rel="stylesheet" href="assets/css/welcome.css">
+    <link rel="stylesheet" href="assets/css/mod-list.css">
     <style>
         body {
             margin: 0;
@@ -258,6 +259,119 @@
         <section id="tab-frk-dm" class="main-content">
         </section>
 
+        <!-- Vista oculta accesible únicamente mediante el hash #frk-mod-list.
+             No existe ningún botón, enlace ni elemento de menú que apunte aquí:
+             el router genérico de main.js la activa igual que cualquier otra
+             sección en cuanto detecta el hash en la URL. -->
+        <section id="tab-frk-mod-list" class="main-content modlist-view">
+            <div class="modlist-shell">
+                <header class="modlist-header">
+                    <h1 class="modlist-title">Generador de <span class="text-accent">JSON</span></h1>
+                    <p class="modlist-subtitle">Herramienta interna para construir archivos de nivel</p>
+                </header>
+
+                <div class="modlist-toolbar">
+                    <input type="file" id="modlist-file-input" accept=".json" style="display:none;">
+                    <button type="button" id="modlist-btn-load" class="btn btn--secondary">Cargar archivo</button>
+                    <button type="button" id="modlist-btn-download" class="btn btn--primary" disabled>Descargar JSON</button>
+                </div>
+
+                <form id="modlist-form" class="modlist-form">
+
+                    <fieldset class="modlist-fieldset">
+                        <legend class="modlist-legend">Datos generales</legend>
+
+                        <div class="modlist-field">
+                            <label class="modlist-label" for="modlist-filename">Nombre del archivo</label>
+                            <input type="text" id="modlist-filename" class="modlist-input" placeholder="damage.json">
+                        </div>
+
+                        <div class="modlist-field">
+                            <label class="modlist-label" for="modlist-id">ID</label>
+                            <input type="number" id="modlist-id" class="modlist-input" placeholder="84324862">
+                        </div>
+
+                        <div class="modlist-field">
+                            <label class="modlist-label" for="modlist-name">Nombre</label>
+                            <input type="text" id="modlist-name" class="modlist-input" placeholder="Damage">
+                        </div>
+
+                        <div class="modlist-field">
+                            <label class="modlist-label" for="modlist-author">Autor</label>
+                            <input type="text" id="modlist-author" class="modlist-input" placeholder="SonyaBMW">
+                        </div>
+
+                        <div class="modlist-field">
+                            <label class="modlist-label" for="modlist-verifier">Verifier</label>
+                            <input type="text" id="modlist-verifier" class="modlist-input" placeholder="Gilberto_Dash">
+                        </div>
+
+                        <div class="modlist-field">
+                            <label class="modlist-label" for="modlist-verification">Verification</label>
+                            <input type="url" id="modlist-verification" class="modlist-input" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+
+                        <div class="modlist-field">
+                            <label class="modlist-label" for="modlist-percent">PercentToQualify</label>
+                            <input type="number" id="modlist-percent" class="modlist-input" min="1" max="100" placeholder="100">
+                        </div>
+
+                        <div class="modlist-field">
+                            <label class="modlist-label" for="modlist-password">Password</label>
+                            <input type="text" id="modlist-password" class="modlist-input" placeholder="Free To Copy">
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="modlist-fieldset">
+                        <legend class="modlist-legend">Creators</legend>
+
+                        <div id="modlist-creators-list" class="modlist-creators-list">
+                            <div class="modlist-creator-row" data-creator-row>
+                                <input type="text" class="modlist-input modlist-creator-input" placeholder="Nombre del creator">
+                                <button type="button" class="modlist-remove-btn" data-remove-creator title="Eliminar creator">×</button>
+                            </div>
+                        </div>
+
+                        <button type="button" id="modlist-btn-add-creator" class="btn btn--secondary modlist-add-btn">+ Añadir Creator</button>
+                    </fieldset>
+
+                    <fieldset class="modlist-fieldset">
+                        <legend class="modlist-legend">Records</legend>
+
+                        <div id="modlist-records-list" class="modlist-records-list">
+                            <div class="modlist-record" data-record>
+                                <div class="modlist-record__header">
+                                    <span class="modlist-record__label" data-record-label>Record #1</span>
+                                    <button type="button" class="modlist-remove-btn" data-remove-record title="Eliminar record">×</button>
+                                </div>
+                                <div class="modlist-record__grid">
+                                    <div class="modlist-field">
+                                        <label class="modlist-label">User</label>
+                                        <input type="text" class="modlist-input modlist-record-user" placeholder="Gilberto_Dash">
+                                    </div>
+                                    <div class="modlist-field">
+                                        <label class="modlist-label">Link</label>
+                                        <input type="url" class="modlist-input modlist-record-link" placeholder="https://www.youtube.com/watch?v=...">
+                                    </div>
+                                    <div class="modlist-field">
+                                        <label class="modlist-label">Percent</label>
+                                        <input type="number" class="modlist-input modlist-record-percent" min="1" max="100" placeholder="100">
+                                    </div>
+                                    <div class="modlist-field">
+                                        <label class="modlist-label">Hz</label>
+                                        <input type="number" class="modlist-input modlist-record-hz" min="0" placeholder="140">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" id="modlist-btn-add-record" class="btn btn--secondary modlist-add-btn">+ Añadir Record</button>
+                    </fieldset>
+
+                </form>
+            </div>
+        </section>
+
     </main>
 
     <!-- Player Modal -->
@@ -271,5 +385,6 @@
     <script src="assets/js/frk-dm.js"></script>
     <script src="main.js"></script>
     <script src="assets/js/mobile-hamburger.js"></script>
+    <script src="assets/js/mod-list.js"></script>
 </body>
 </html>
