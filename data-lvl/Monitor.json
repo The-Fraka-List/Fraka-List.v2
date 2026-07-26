@@ -1,0 +1,18 @@
+{
+    "id": 125040851,
+    "name": "Monitor",
+    "author": "NinKaz",
+    "creators": ["125040851"],
+    "verifier": "Aku",
+    "verification": "https://www.youtube.com/watch?v=-zxadl8n3mE&t=14s",
+    "percentToQualify": "100",
+    "password": "270416",
+    "records": [
+        {
+            "user": "Aku",
+            "link": "https://www.youtube.com/watch?v=-zxadl8n3mE&t=14s",
+            "percent": 100,
+            "hz": 144
+        }
+    ]
+}
