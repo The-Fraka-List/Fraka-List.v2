@@ -1,0 +1,18 @@
+{
+    "id": 92362284,
+    "name": "La Llorona",
+    "author": "CherryTeam",
+    "creators": ["CherryTeam"],
+    "verifier": "Juniorlock",
+    "verification": "https://www.youtube.com/watch?v=UKmhcMisWxo",
+    "percentToQualify": "100",
+    "password": "270416",
+    "records": [
+        {
+            "user": "Juniorlock",
+            "link": "https://www.youtube.com/watch?v=UKmhcMisWxo",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
