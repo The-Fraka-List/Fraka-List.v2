@@ -1,0 +1,18 @@
+{
+    "id": 74361921,
+    "name": "RELENTLESS",
+    "author": "SurJaco",
+    "creators": ["SurJaco, Boii, nCylix and more"],
+    "verifier": "S3b4s506_",
+    "verification": "https://www.youtube.com/watch?v=1AIz8rFfFak",
+    "percentToQualify": "100",
+    "password": "270416",
+    "records": [
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=1AIz8rFfFak",
+            "percent": 100,
+            "hz": 360
+        }
+    ]
+}
