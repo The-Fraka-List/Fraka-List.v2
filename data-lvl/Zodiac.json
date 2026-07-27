@@ -1,0 +1,18 @@
+   {
+    "id": 52374843,
+    "name": "Zodiac",
+    "author": "BIANOX",
+    "creators": ["Xander556 & More"],
+    "verifier": "AleezCourtz",
+    "verification": "https://youtu.be/yKfm-Z0TGkk?si=LAB2kxWbJLPjk8--",
+    "percentToQualify": "100",
+    "password": 587500,
+    "records": [
+        {
+            "user": "AleezCourtz",
+            "link": "https://youtu.be/yKfm-Z0TGkk?si=LAB2kxWbJLPjk8--",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
