@@ -85,6 +85,12 @@
             "link": "https://www.youtube.com/watch?v=vI-63XSZj4s&list=PLELpjRfo_Td42AOcQG6T64K9f6ML7QGot&index=12",
             "percent": 100,
             "hz": 240
+        },
+        {
+            "user": "Ares",
+            "link": "https://youtu.be/kym4YuYVszg?si=yRlDB0YeICSW6H5y",
+            "percent": 100,
+            "hz": 60
         }
     ]
 }

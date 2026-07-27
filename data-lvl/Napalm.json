@@ -1,0 +1,18 @@
+{
+    "id": 65561437,
+    "name": "Napalm",
+    "author": "Marwec",
+    "creators": ["Marwec"],
+    "verifier": "AleezCourtz",
+    "verification": "https://youtu.be/6fg365Fjskk?si=6gVUQL-ZdMDhMkPC",
+    "percentToQualify": "100",
+    "password": "270416",
+    "records": [
+        {
+            "user": "AleezCourtz",
+            "link": "https://youtu.be/6fg365Fjskk?si=6gVUQL-ZdMDhMkPC",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
