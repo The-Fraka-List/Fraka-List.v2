@@ -1,0 +1,17 @@
+{
+    "id": 17711004,
+    "name": "Congregation",
+    "author": "Presta",
+    "creators": ["Presta"],
+    "verifier": "elmatigeims",
+    "verification": "https://youtu.be/grztJLk-OlQ?si=wC99D0KZbEv_O8cf",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Aku",
+            "link": "https://youtu.be/grztJLk-OlQ?si=wC99D0KZbEv_O8cf",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}
