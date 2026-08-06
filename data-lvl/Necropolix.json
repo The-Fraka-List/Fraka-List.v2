@@ -1,0 +1,18 @@
+{
+    "id": 68353244,
+    "name": "Necropolix",
+    "author": "Namtar",
+    "creators": ["Namtar"],
+    "verifier": "xReizer",
+    "verification": "https://youtu.be/CQg43NX3-aU?si=-Xzp7DqAIcTYbtY8",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "xReizer",
+            "link": "https://youtu.be/CQg43NX3-aU?si=-Xzp7DqAIcTYbtY8",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

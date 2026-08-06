@@ -1,0 +1,18 @@
+  {
+  "id": 68688849,
+    "name": "Sonic wave Rebirth",
+    "author": "Serponge",
+    "creators": ["Cyclic, Serponge & FunnyGame"],
+    "verifier": "S3b4s506_",
+    "verification": "https://www.youtube.com/watch?v=YsdvjJLco1U",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=YsdvjJLco1U",
+            "percent": 100,
+            "hz": 360
+        }
+    ]
+}
