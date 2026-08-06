@@ -105,7 +105,7 @@ function mostrarDetallePost(postId) {
         ? `<div class="fdm-detail__votes-container">
             <h3 class="fdm-detail__section-title">Resultado de Votaciones</h3>
             <ul class="fdm-detail__votes-list">
-                ${post.votes.map(v => `<li><span class="fdm-detail__voter">${v.voter}:</span> <span class="fdm-detail__score">${v.score}/10</span></li>`).join('')}
+                ${post.votes.map(v => `<li><span class="fdm-detail__voter">${v.voter}:</span> <span class="fdm-detail__score">${v.score} votos</span></li>`).join('')}
             </ul>
            </div>`
         : '';

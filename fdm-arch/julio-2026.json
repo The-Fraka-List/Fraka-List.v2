@@ -1,0 +1,29 @@
+[
+  {
+    "title": "Fraka del mes - JULIO 2026",
+    "subtitle": "La competencia por el mejor llegó a su fin.",
+    "winner": "Cerrod11",
+    "banner": "assets/img/banners/cerro.png",
+    "info": "La votacion fue loquisima, Serrod estaba en segundo lugar con un 23% de votos y Sebas (owner del frk clan) obtubo un 63% de los votos.",
+    "subinfo": "No hay mucho que decir, fue un mes tranquilo pero divertido, pasaron cosas, felicidades a Serrod11 por ganar este puesto!",
+    "votes": [
+      {
+        "voter": "Serrod11",
+        "score": 10
+      },
+      {
+        "voter": "Aleez",
+        "score": 5
+      },
+      {
+        "voter": "Sevas",
+        "score": 27
+      },
+      {
+        "voter": "Toxic",
+        "score": 1
+      }
+    ],
+    "video": "https://youtu.be/mVy8XcmGG2E?si=Ng-h6rVsBDJjbBzE"
+  }
+]
