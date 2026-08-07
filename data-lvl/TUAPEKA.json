@@ -1,0 +1,20 @@
+{
+    "id": 92299438,
+    "name": "TUAPEKA",
+    "author": "feijoaoa",
+    "creators": [
+        "feijoaoa"
+    ],
+    "verifier": "S3b4s506_",
+    "verification": "https://www.youtube.com/watch?v=Di3yadPyzB8",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=Di3yadPyzB8",
+            "percent": 100,
+            "hz": 340
+        }
+    ]
+}
