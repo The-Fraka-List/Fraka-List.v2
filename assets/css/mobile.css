@@ -577,3 +577,182 @@
         font-size: 1.4rem;
     }
 }
+
+/* ── PERFIL (#tab-profile): carrusel horizontal en mobile ──
+   Mismo HTML y mismas funciones JS que en escritorio (renderPlayerProfileLayout/
+   Stats/Levels/Card no cambian en absoluto); acá solo se reacomoda el layout
+   existente vía flexbox + scroll-snap. El grid de 3 columnas de escritorio
+   (definido en components.css) no se toca: esta regla vive únicamente bajo
+   el breakpoint mobile, igual que .list-layout más arriba.
+
+   .profile-layout ya recibe padding-top (nav-height + space-4) y
+   padding-bottom (space-8) desde la regla genérica .main-content.active de
+   más arriba (aplicada sobre #tab-profile) — por eso acá se ponen en 0 los
+   propios de .profile-layout (los de escritorio), para no duplicar el
+   espaciado, y la altura se calcula descontando exactamente esos mismos
+   valores para que el carrusel ocupe una sola pantalla completa.
+
+   Orden pedido (Perfil -> Lista de niveles -> Estadísticas), distinto al
+   orden del DOM que genera main.js (Estadísticas, Lista, Perfil): se
+   resuelve con `order` de flexbox, sin reordenar ni duplicar el HTML. */
+@media (max-width: 768px) {
+
+    /* Red de seguridad anti-overflow: ningún elemento dentro del sistema de
+       perfiles (los 3 paneles, y el popup de confirmación de video, que se
+       inyecta aparte en <body> pero es parte del mismo sistema) puede
+       terminar más ancho que su contenedor. Sin esto, cualquier elemento
+       con width:100% + padding/border en box-sizing:content-box (el default
+       del navegador, porque el sitio no tiene un reset global de
+       box-sizing) se pasa unos px del ancho disponible y genera scroll
+       horizontal no deseado a nivel de página. max-width:100% además
+       obliga a que cualquier bloque angosto (tarjetas, barras de progreso,
+       texto) se reacomode adentro en vez de desbordar hacia los costados.
+       No afecta el ancho de los 3 paneles en sí (eso lo define
+       flex:0 0 100% más abajo), solo actúa como límite superior. */
+    #tab-profile,
+    #tab-profile *,
+    .confirm-popup,
+    .confirm-popup * {
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    /* Los nombres de nivel dentro de la lista del perfil (reutilizan
+       .text-display, igual que el listado principal) no tienen manejo de
+       overflow propio: en el listado principal el panel es ancho de sobra,
+       pero acá el panel es de pantalla completa y un nombre largo podría
+       generar overflow horizontal si trajera una palabra sin espacios. Se
+       escopea solo a este panel para no tocar #levels-sidebar. */
+    #profile-levels-container .text-display {
+        overflow-wrap: break-word;
+    }
+
+    .profile-layout {
+        display: flex !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        gap: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        padding-inline: 0 !important;
+        height: calc(100dvh - var(--nav-height) - var(--space-4) - var(--space-8)) !important;
+        /* Firefox: scrollbar delgada con el mismo color que el resto del sitio */
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+    }
+
+    /* Scrollbar horizontal con el mismo diseño que ya usa el resto del
+       sitio (ver .profile-panel::-webkit-scrollbar en components.css):
+       misma altura, mismo color de thumb y mismo hover, solo que acá es
+       horizontal en vez de vertical. Cubre el caso de que aparezca una
+       barra visible (trackpad, mouse, tablet con puntero) además del
+       swipe táctil. */
+    .profile-layout::-webkit-scrollbar {
+        height: 6px;
+    }
+    .profile-layout::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: var(--radius-sm);
+    }
+    .profile-layout::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+    }
+
+    .profile-panel {
+        flex: 0 0 100%;
+        max-width: 100%;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+    }
+
+    .profile-panel--right  { order: 1; } /* 1. Perfil (tarjeta) */
+    .profile-panel--center { order: 2; } /* 2. Lista de niveles */
+    .profile-panel--left   { order: 3; } /* 3. Estadísticas */
+
+    /* Indicadores del carrusel: fila de puntitos fija en la parte inferior
+       de #tab-profile, por encima del carrusel (no se mueven con el swipe
+       porque son hermanos de .profile-layout, no hijos). El punto de la
+       sección visible se llena; el resto queda hueco. */
+    .profile-carousel-dots {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-2);
+
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: var(--space-4);
+        z-index: 5;
+        pointer-events: none;
+    }
+
+    .profile-carousel-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: var(--radius-full);
+        background: transparent;
+        border: 1px solid var(--text-secondary);
+        transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .profile-carousel-dot.active {
+        background: var(--accent-light);
+        border-color: var(--accent-light);
+        transform: scale(1.2);
+    }
+}
+
+/* ── PERFIL: ajuste fino para teléfonos muy angostos (~320-480px) ──
+   El breakpoint de 768px de arriba ya deja todo sin overflow, esto solo
+   apretuja un poco más el espaciado y algunos tamaños para que no se sienta
+   amontonado en pantallas chicas, igual que ya hace el sitio para
+   .lb-card/.fdm-* en sus propios bloques de 480px. No cambia ninguna
+   estructura, solo valores de padding/tamaño. */
+@media (max-width: 480px) {
+    #tab-profile .profile-panel {
+        padding: var(--space-3);
+    }
+
+    #tab-profile .profile-card__avatar {
+        width: 72px;
+        height: 72px;
+    }
+
+    #tab-profile .profile-card__avatar-wrap {
+        top: 96px;
+    }
+
+    #tab-profile .profile-card__top {
+        height: 96px;
+    }
+
+    #tab-profile .profile-card__bottom {
+        top: 96px;
+    }
+
+    #tab-profile .profile-card__body {
+        padding: calc(145px + var(--space-4)) var(--space-4) var(--space-4);
+    }
+
+    #tab-profile .profile-card__name {
+        font-size: 1.1rem;
+        margin-bottom: var(--space-4);
+    }
+
+    #tab-profile .profile-panel__title {
+        font-size: 0.9rem;
+    }
+
+    #profile-levels-container .level-card {
+        padding: var(--space-3) !important;
+        gap: var(--space-3) !important;
+    }
+
+    .confirm-popup__content {
+        padding: var(--space-4);
+    }
+}

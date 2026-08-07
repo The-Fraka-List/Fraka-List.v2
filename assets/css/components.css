@@ -255,6 +255,311 @@ html, body {
     background: var(--text-muted);
 }
 
+/* ── PERFIL DE JUGADOR (#player/Nombre): layout de 3 columnas ──
+   Mismo patrón que .list-layout (grid + padding-top compensando la nav
+   fija), pero con 3 columnas en vez de 2. Los paneles arrancan vacíos:
+   el contenido de cada uno se agrega en un paso posterior. */
+.profile-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr 320px;
+    gap: var(--space-6);
+
+    padding-top: calc(var(--nav-height) + var(--space-4));
+    padding-bottom: var(--space-4);
+    padding-inline: var(--space-6);
+
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.profile-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-sizing: border-box;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--space-4);
+}
+
+.profile-panel::-webkit-scrollbar {
+    width: 6px;
+}
+.profile-panel::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: var(--radius-sm);
+}
+.profile-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+.profile-panel--left {
+    grid-column: 1;
+}
+
+.profile-panel--center {
+    grid-column: 2;
+}
+
+.profile-panel--right {
+    grid-column: 3;
+    /* La tarjeta pinta su propio fondo de borde a borde (degradado arriba +
+       fondo base abajo), así que el panel no debe agregar padding propio;
+       overflow:hidden además recorta la tarjeta con las mismas esquinas
+       redondeadas del panel. */
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Indicadores del carrusel (puntitos). Ocultos por defecto: solo tienen
+   sentido en el carrusel horizontal de mobile. El estilo visual completo
+   (tamaño, color, estado activo) vive en mobile.css, dentro del breakpoint
+   correspondiente, junto con el resto de las reglas del carrusel. */
+.profile-carousel-dots {
+    display: none;
+}
+
+/* ── PANEL IZQUIERDO: Records ── */
+.profile-panel__title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-stat-label {
+    font-size: 0.75rem;
+    font-weight: var(--font-medium);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.profile-stat-value {
+    font-family: var(--font-mono);
+    font-weight: var(--font-bold);
+    font-size: 1rem;
+    color: var(--accent-light);
+}
+
+.profile-stat-hardest-block {
+    margin-top: var(--space-4);
+}
+
+.profile-stat-hardest-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+}
+
+.profile-stat-hardest-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3);
+}
+
+.profile-stat-hardest-name {
+    font-size: 0.85rem;
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profile-stat-hardest-rank {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.profile-stat-hardest-empty {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: var(--space-2) 0;
+}
+
+/* ── Popup "¿Ir al video del jugador...?" ──
+   Mismo lenguaje visual que el resto de los overlays del sitio (fondo
+   oscurecido con blur + tarjeta bg-surface/border/radius-lg), pero es un
+   componente propio: no reutiliza ni modifica #player-modal. */
+.confirm-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+}
+
+.confirm-popup__content {
+    width: 100%;
+    max-width: 380px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: modalSlideUp 0.3s ease;
+    text-align: center;
+}
+
+.confirm-popup__text {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: var(--font-medium);
+    color: var(--text-primary);
+    margin: 0 0 var(--space-6);
+    line-height: 1.4;
+}
+
+.confirm-popup__actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-3);
+}
+
+/* ── TARJETA DE JUGADOR (dentro de profile-panel--right) ──
+   Estructura: mitad superior con degradado (colores principales del sitio,
+   se adaptan solas en modo Legacy porque usan las mismas variables --accent),
+   mitad inferior con el fondo base, avatar circular superpuesto justo sobre
+   la división, nombre debajo, y una barra de progreso "X/150 Main List". */
+.profile-card {
+    position: relative;
+    height: 100%;
+    min-height: 320px;
+}
+
+.profile-card__top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 110px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+}
+
+.profile-card__bottom {
+    position: absolute;
+    top: 110px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-base);
+}
+
+.profile-card__avatar-wrap {
+    position: absolute;
+    top: 110px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.profile-card__avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: var(--radius-full);
+    background: var(--bg-elevated);
+    border: 4px solid var(--bg-surface);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.profile-card__avatar-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    /* Los gifs animados no reciben ningún tratamiento especial: se muestran
+       tal cual, igual que cualquier otro formato de la cascada. */
+}
+
+.profile-card__body {
+    position: relative;
+    z-index: 1;
+    padding: calc(145px + var(--space-6)) var(--space-6) var(--space-6);
+    text-align: center;
+}
+
+.profile-card__name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-6);
+    word-break: break-word;
+}
+
+.profile-card__progress-block {
+    text-align: left;
+}
+
+.profile-card__progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-2);
+}
+
+.profile-card__progress-count {
+    font-family: var(--font-mono);
+    font-weight: var(--font-bold);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.profile-card__progress-tag {
+    font-size: 0.7rem;
+    font-weight: var(--font-medium);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.profile-card__progress-track {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.profile-card__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: var(--radius-full);
+    transition: width var(--transition-base);
+}
+
 /* ── RISING: mismas reglas que levels-sidebar/level-details, aplicadas
    a los IDs propios de este apartado para no interferir con List ── */
 #rising-sidebar {

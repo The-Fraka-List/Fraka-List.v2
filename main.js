@@ -7,6 +7,15 @@ let currentDetailLevelId = null;
 // tiene distinción Top 150+ y puede superar los 150 niveles sin problema).
 let globalRisingLevels = [];
 let currentRisingDetailId = null;
+
+// Ruta de perfil de jugador (#player/Nombre). No es una sección estática:
+// se resuelve siempre contra el contenedor genérico tab-profile. Se guarda
+// el username tal cual vino en el hash (sin forzar minúsculas), porque las
+// comparaciones de jugador en el resto del sistema son case-sensitive.
+let currentProfileUsername = null;
+// Contexto de lista activo para la tarjeta de perfil: si el usuario entra a
+// un perfil desde List o Rising, la barra de progreso usa esa lista como base.
+let currentProfileListContext = 'list';
 // El interruptor en RISING no controla Legacy (no existe en este apartado):
 // alterna entre la lista de niveles y la leaderboard propia de RISING.
 let risingLeaderboardVisible = false;
@@ -172,21 +181,371 @@ function copyToClipboard(text) {
 // misma responsabilidad; handleHashRouting() ya es genérico (tab-${route})
 // y no requiere tocarse para agregar nuevos apartados como RISING.
 
+// Layout base de la vista de perfil (#player/Nombre): 3 columnas vacías.
+// Izquierda: panel vacío (uso futuro). Centro: contenedor donde luego irá
+// la lista de niveles completados/progreso del jugador. Derecha: contenedor
+// donde luego irá la tarjeta de stats del jugador. Por ahora no se pinta
+// ningún dato, solo la estructura para que la sección no se vea rota.
+// ── SISTEMA DE AVATAR DEL PERFIL ──────────────────────────────────────
+// El nombre del jugador determina el archivo a buscar en assets/img/pfp/,
+// probando extensiones en este orden hasta encontrar una que exista. Si
+// ninguna existe, cae en el archivo fijo default.png. Los gifs no reciben
+// ningún tratamiento especial: es solo una extensión más en la cascada, así
+// que si el archivo es un gif animado, se muestra animado sin más.
+const AVATAR_DIR = 'assets/img/pfp/';
+const AVATAR_EXTENSIONS = ['png', 'webp', 'gif', 'jpg', 'jpeg', 'svg'];
+const AVATAR_DEFAULT_SRC = `${AVATAR_DIR}default.png`;
+
+function getAvatarSrc(username, extensionIndex) {
+    return `${AVATAR_DIR}${encodeURIComponent(username)}.${AVATAR_EXTENSIONS[extensionIndex]}`;
+}
+
+// Se engancha al 'onerror' del <img>: si el formato actual no existe,
+// intenta el siguiente de la lista. Cuando se agotan todos, usa
+// default.png y desengancha el listener para no reintentar en bucle si
+// default.png tampoco llegara a existir.
+function handleAvatarError(imgEl) {
+    const username = imgEl.dataset.avatarUsername;
+    const nextIndex = parseInt(imgEl.dataset.avatarAttempt || '0', 10) + 1;
+
+    if (nextIndex < AVATAR_EXTENSIONS.length) {
+        imgEl.dataset.avatarAttempt = String(nextIndex);
+        imgEl.src = getAvatarSrc(username, nextIndex);
+        return;
+    }
+
+    imgEl.onerror = null;
+    imgEl.src = AVATAR_DEFAULT_SRC;
+}
+
+// Panel izquierdo (Records). Todos los datos salen de window.leaderboardPlayers,
+// que ya lo calcula renderLeaderboard() sobre globalLevels (Main List completa,
+// #list + legacy incluidos: renderLeaderboard no filtra por getVisibleLevels,
+// así que un nivel Top 151+ aporta puntos/victorias/hardest igual que uno
+// Top 1-150). No se escribe ningún dato a mano: si window.leaderboardPlayers
+// todavía no se calculó (carga inicial en curso), se muestra vacío y
+// inicializarSitio() vuelve a llamar a esta función apenas termina de cargar.
+function renderPlayerProfileStats(username) {
+    const panel = document.getElementById('profile-side-panel');
+    if (!panel) return;
+
+    const rankedPlayers = window.leaderboardPlayers || [];
+    const rankIndex = rankedPlayers.findIndex(p => p.name === username);
+    const player = rankIndex !== -1 ? rankedPlayers[rankIndex] : null;
+
+    const rankingLabel = player ? `#${rankIndex + 1}` : '—';
+    const totalPoints = player ? player.points.toFixed(2) : '0.00';
+    const victories = player ? player.completions : 0;
+
+    const top3Hardest = player && Array.isArray(player.completedLevels)
+        ? [...player.completedLevels].sort((a, b) => a.rank - b.rank).slice(0, 3)
+        : [];
+
+    const hardestHTML = top3Hardest.length > 0
+        ? top3Hardest.map(level => `
+            <div class="profile-stat-hardest-item">
+                <span class="profile-stat-hardest-name">${level.level}</span>
+                <span class="profile-stat-hardest-rank">Top ${level.rank}</span>
+            </div>
+        `).join('')
+        : `<div class="profile-stat-hardest-empty">Sin completados todavía.</div>`;
+
+    panel.innerHTML = `
+        <h3 class="profile-panel__title">Records</h3>
+
+        <div class="profile-stat-row">
+            <span class="profile-stat-label">Ranking Leader</span>
+            <span class="profile-stat-value">${rankingLabel}</span>
+        </div>
+
+        <div class="profile-stat-row">
+            <span class="profile-stat-label">Puntos de lista</span>
+            <span class="profile-stat-value">${totalPoints}</span>
+        </div>
+
+        <div class="profile-stat-row">
+            <span class="profile-stat-label">Victorias</span>
+            <span class="profile-stat-value">${victories}</span>
+        </div>
+
+        <div class="profile-stat-hardest-block">
+            <span class="profile-stat-label">Top 3 Hardest</span>
+            <div class="profile-stat-hardest-list">
+                ${hardestHTML}
+            </div>
+        </div>
+    `;
+}
+
+// Panel central: lista de niveles completados por el jugador en la Main
+// List. Reutiliza EXACTAMENTE el mismo diseño de tarjeta que el listado
+// principal (misma clase 'card level-card' y mismo markup interno que arma
+// renderNivelesEnSidebar), pero NO usa esa función ni su onClickFn
+// (mostrarDetallesNivel): acá el click abre el popup de confirmación del
+// video, nunca el panel de detalle de nivel. El listado principal
+// (#levels-sidebar) no se toca en ningún punto de esta función.
+function renderPlayerProfileLevels(username) {
+    const container = document.getElementById('profile-levels-container');
+    if (!container) return;
+
+    const rankedPlayers = window.leaderboardPlayers || [];
+    const player = rankedPlayers.find(p => p.name === username);
+    const completedLevels = (player && Array.isArray(player.completedLevels))
+        ? [...player.completedLevels].sort((a, b) => a.rank - b.rank)
+        : [];
+
+    container.innerHTML = '';
+
+    if (completedLevels.length === 0) {
+        container.innerHTML = `
+            <div style="padding: var(--space-6); text-align: center; color: var(--text-muted);">
+                Este jugador todavía no completó niveles de la Main List.
+            </div>
+        `;
+        return;
+    }
+
+    completedLevels.forEach(completado => {
+        // completedLevels solo trae {level, rank, video}; se cruza con
+        // globalLevels por rank para recuperar autor/creators, igual que
+        // hace el listado principal.
+        const nivelCompleto = globalLevels.find(n => n.rank === completado.rank);
+        const autor = nivelCompleto
+            ? getCreatorPrimary(nivelCompleto.creators, nivelCompleto.author)
+            : 'Desconocido';
+
+        const item = document.createElement('div');
+        item.className = 'card level-card';
+        item.style.marginBottom = 'var(--space-3)';
+        item.style.cursor = 'pointer';
+        item.style.display = 'flex';
+        item.style.alignItems = 'center';
+        item.style.gap = 'var(--space-4)';
+        item.style.padding = 'var(--space-4)';
+
+        item.onclick = () => openPlayerVideoConfirm(username, completado.video);
+
+        item.innerHTML = `
+            <div class="text-accent text-mono" style="font-size: 1.3rem; font-weight: 700; min-width: 45px;">#${completado.rank}</div>
+            <div style="flex: 1;">
+                <div class="text-display" style="font-weight: 600; font-size: 1.15rem; color: var(--text-primary); line-height: 1.2;">${completado.level}</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">por ${autor}</div>
+            </div>
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+// ── Popup "¿Ir al video del jugador...?" ──────────────────────────────
+// Componente propio, independiente de #player-modal (no se toca ni se
+// reutiliza ese modal viejo). Reusa el mismo lenguaje visual del sitio:
+// overlay con blur + tarjeta bg-surface/border/radius-lg, y los mismos
+// botones .btn/.btn--primary/.btn--secondary que ya existen en el resto
+// de la página (roulette, mod-list, etc.).
+function openPlayerVideoConfirm(username, videoUrl) {
+    closePlayerVideoConfirm(); // por si ya había uno abierto
+
+    const overlay = document.createElement('div');
+    overlay.id = 'confirm-popup-overlay';
+    overlay.className = 'confirm-popup';
+    overlay.onclick = (event) => {
+        if (event.target === overlay) closePlayerVideoConfirm();
+    };
+
+    overlay.innerHTML = `
+        <div class="confirm-popup__content">
+            <p class="confirm-popup__text">¿Ir al video del jugador "${username}"?</p>
+            <div class="confirm-popup__actions">
+                <button type="button" class="btn btn--secondary" id="confirm-popup-no">No</button>
+                <button type="button" class="btn btn--primary" id="confirm-popup-yes">Sí</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+
+    document.getElementById('confirm-popup-no').onclick = closePlayerVideoConfirm;
+    document.getElementById('confirm-popup-yes').onclick = () => {
+        if (videoUrl) {
+            window.open(videoUrl, '_blank');
+        }
+        closePlayerVideoConfirm();
+    };
+}
+
+function closePlayerVideoConfirm() {
+    const overlay = document.getElementById('confirm-popup-overlay');
+    if (overlay) overlay.remove();
+    document.body.style.overflow = '';
+}
+
+function renderPlayerProfileLayout(username) {
+    const container = document.getElementById('tab-profile');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="profile-layout">
+            <aside class="profile-panel profile-panel--left" id="profile-side-panel"></aside>
+            <div class="profile-panel profile-panel--center" id="profile-levels-container"></div>
+            <aside class="profile-panel profile-panel--right" id="profile-card-container"></aside>
+        </div>
+
+        <!-- Indicadores del carrusel: SOLO tienen efecto visual en mobile
+             (ver .profile-carousel-dots en components.css/mobile.css). En
+             escritorio quedan con display:none, sin ningún impacto. El
+             orden de los puntos sigue el orden VISUAL del swipe (Perfil,
+             Lista, Estadísticas), que es el que define 'order' en
+             mobile.css, no el orden del DOM de arriba. -->
+        <div class="profile-carousel-dots" id="profile-carousel-dots">
+            <span class="profile-carousel-dot active" data-panel="profile-card-container"></span>
+            <span class="profile-carousel-dot" data-panel="profile-levels-container"></span>
+            <span class="profile-carousel-dot" data-panel="profile-side-panel"></span>
+        </div>
+    `;
+
+    renderPlayerProfileStats(username);
+    renderPlayerProfileLevels(username);
+    renderPlayerProfileCard(username);
+    initProfileCarouselDots();
+}
+
+// Sincroniza los puntitos del carrusel con la sección visible. Escucha el
+// scroll horizontal de .profile-layout: en escritorio ese contenedor es un
+// grid fijo sin overflow-x, así que el evento 'scroll' prácticamente no
+// dispara ahí, y aunque disparara, los puntos están en display:none — cero
+// efecto sobre el comportamiento de escritorio, no hace falta ningún chequeo
+// de isMobile().
+function initProfileCarouselDots() {
+    const scroller = document.querySelector('#tab-profile .profile-layout');
+    const dots = document.querySelectorAll('#profile-carousel-dots .profile-carousel-dot');
+    if (!scroller || dots.length === 0) return;
+
+    function updateActiveDot() {
+        const width = scroller.clientWidth;
+        if (!width) return;
+        const activeIndex = Math.round(scroller.scrollLeft / width);
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === activeIndex);
+        });
+    }
+
+    scroller.addEventListener('scroll', updateActiveDot, { passive: true });
+    updateActiveDot();
+}
+
+function getPlayerProfileProgressData(username) {
+    const mainListPlayer = (window.leaderboardPlayers || []).find(p => p.name === username) || null;
+    const risingPlayer = (window.risingLeaderboardPlayers || []).find(p => p.name === username) || null;
+
+    const completedInMainList = (mainListPlayer?.completedLevels || [])
+        .filter(level => typeof level?.rank === 'number' && level.rank <= 150)
+        .length;
+
+    const completedInRising = Array.isArray(risingPlayer?.completedLevels)
+        ? risingPlayer.completedLevels.length
+        : 0;
+    const totalRisingLevels = Array.isArray(globalRisingLevels) ? globalRisingLevels.length : 0;
+
+    const isRisingContext = currentProfileListContext === 'rising' || (completedInRising > 0 && completedInMainList === 0);
+
+    if (isRisingContext && totalRisingLevels > 0) {
+        const percent = Math.round((completedInRising / totalRisingLevels) * 100);
+        return {
+            label: `${completedInRising}/${totalRisingLevels} Rising`,
+            progressTag: 'Rising',
+            percent
+        };
+    }
+
+    const percent = Math.round((completedInMainList / 150) * 100);
+    return {
+        label: `${completedInMainList}/150 Main List`,
+        progressTag: 'Main List',
+        percent
+    };
+}
+
+// Tarjeta del jugador (columna derecha): usa el progreso real del jugador
+// según la lista activa (Main List o Rising) en lugar de valores fijos.
+function renderPlayerProfileCard(username) {
+    const cardContainer = document.getElementById('profile-card-container');
+    if (!cardContainer) return;
+
+    const progressData = getPlayerProfileProgressData(username);
+
+    cardContainer.innerHTML = `
+        <div class="profile-card">
+            <div class="profile-card__top"></div>
+            <div class="profile-card__bottom"></div>
+
+            <div class="profile-card__avatar-wrap">
+                <div class="profile-card__avatar">
+                    <img
+                        class="profile-card__avatar-img"
+                        src="${getAvatarSrc(username, 0)}"
+                        data-avatar-username="${username}"
+                        data-avatar-attempt="0"
+                        onerror="handleAvatarError(this)"
+                        alt="${username}"
+                    >
+                </div>
+            </div>
+
+            <div class="profile-card__body">
+                <div class="profile-card__name">${username}</div>
+
+                <div class="profile-card__progress-block">
+                    <div class="profile-card__progress-label">
+                        <span class="profile-card__progress-count">${progressData.label}</span>
+                        <span class="profile-card__progress-tag">${progressData.progressTag}</span>
+                    </div>
+                    <div class="profile-card__progress-track">
+                        <div class="profile-card__progress-fill" style="width: ${progressData.percent}%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 function handleHashRouting() {
+    // 0. Extraer el hash crudo, SIN forzar minúsculas todavía: si es una ruta
+    // de perfil (#player/Nombre) necesitamos preservar mayúsculas/minúsculas
+    // originales del username antes de decidir cómo tratar el resto de la ruta.
+    const rawHash = window.location.hash.replace('#', '');
+    const isProfileRoute = /^player\//i.test(rawHash);
+
     // 1. Extraer el identificador del hash actual (ej: '#roulette' -> 'roulette')
-    let route = window.location.hash.replace('#', '').toLowerCase();
+    let route = rawHash.toLowerCase();
     if (!route) route = 'welcome'; // Sin hash → pantalla de bienvenida
 
     // Excepción única por si usas el alias heredado '#challenges' para la sección frk-dm
     if (route === 'challenges') route = 'frk-dm';
 
-    // 2. Construir dinámicamente el ID de la sección que deberíamos buscar
-    const targetSectionId = `tab-${route}`;
+    // 2. Construir dinámicamente el ID de la sección que deberíamos buscar.
+    // Caso especial: las rutas de perfil no tienen una sección estática propia
+    // por jugador (no existe tab-player-matus); todas resuelven contra el
+    // mismo contenedor genérico tab-profile.
+    currentProfileUsername = null;
+    if (route === 'list' || route === 'rising') {
+        currentProfileListContext = route;
+    }
+
+    let targetSectionId;
+    if (isProfileRoute) {
+        currentProfileUsername = decodeURIComponent(rawHash.slice('player/'.length));
+        targetSectionId = 'tab-profile';
+    } else {
+        targetSectionId = `tab-${route}`;
+    }
     let targetSection = document.getElementById(targetSectionId);
 
     // Redirección de seguridad: Si el hash no existe en el HTML, volver a la bienvenida
     if (!targetSection) {
         route = 'welcome';
+        currentProfileUsername = null;
         targetSection = document.getElementById('tab-welcome');
     }
 
@@ -206,6 +565,13 @@ function handleHashRouting() {
     const targetBtn = document.querySelector(`.nav__link-btn[data-route="${route}"]`);
     if (targetBtn) {
         targetBtn.classList.add('active');
+    }
+
+    // 5. Si la ruta resolvió a un perfil de jugador válido, armar el layout
+    // base dentro de tab-profile. Todavía no se completa con datos: eso se
+    // hace en un paso posterior.
+    if (currentProfileUsername) {
+        renderPlayerProfileLayout(currentProfileUsername);
     }
 }
 
@@ -364,6 +730,15 @@ async function inicializarSitio() {
         renderBugTab(bugs);
 
         renderLeaderboard(globalLevels, 'leaderboard-container', 'leaderboardPlayers');
+
+        // Si la página se abrió directamente en #player/Nombre, el primer
+        // handleHashRouting() (disparado en DOMContentLoaded) puede haber
+        // ocurrido antes de que window.leaderboardPlayers existiera. Una vez
+        // calculado acá, se refresca el panel para que muestre los datos reales.
+        if (currentProfileUsername) {
+            renderPlayerProfileStats(currentProfileUsername);
+            renderPlayerProfileLevels(currentProfileUsername);
+        }
         renderLeaderboard(globalRisingLevels, 'rising-leaderboard-container', 'risingLeaderboardPlayers');
 
         renderSidebar();
@@ -901,7 +1276,7 @@ niveles.forEach(nivel => {
     rankedPlayers.forEach((player, idx) => {
         const rank = idx + 1;
         htmlMobile += `
-            <div class="leaderboard-mobile-row" onclick="openPlayerModal(window.${storageKey}[${idx}], '${storageKey}')">
+            <div class="leaderboard-mobile-row" onclick="window.location.hash = 'player/' + encodeURIComponent(window.${storageKey}[${idx}].name)">
                 <div class="leaderboard-mobile-rank">#${rank}</div>
                 <div class="leaderboard-mobile-name">${player.name}</div>
                 <div class="leaderboard-mobile-arrow">→</div>
@@ -936,7 +1311,7 @@ niveles.forEach(nivel => {
 
         htmlTable += `
             <tr
-                onclick='openPlayerModal(window.${storageKey}[${idx}], "${storageKey}")'
+                onclick='window.location.hash = "player/" + encodeURIComponent(window.${storageKey}[${idx}].name)'
                 style="border-bottom: 1px solid var(--border); transition: background var(--transition-fast); cursor: pointer;"
                 onmouseover="this.style.background='var(--bg-elevated)'"
                 onmouseout="this.style.background='transparent'">
