@@ -571,6 +571,7 @@ function handleHashRouting() {
     // base dentro de tab-profile. Todavía no se completa con datos: eso se
     // hace en un paso posterior.
     if (currentProfileUsername) {
+        playTheGlaiCatProfileAudio(currentProfileUsername);
         renderPlayerProfileLayout(currentProfileUsername);
     }
 }
@@ -1014,12 +1015,18 @@ function renderDetalleNivel(nivel, detailPanelId) {
     `;
 }
 
+function playTheGlaiCatProfileAudio(username) {
+    const normalizedName = (username || '').trim().toLowerCase();
+
+    if (normalizedName === 'theglaicat' && Math.random() < 0.45) {
+        const audio = new Audio('assets/img/cata.mp3');
+        audio.play().catch(() => {});
+    }
+}
+
 function openPlayerModal(playerData, storageKey = 'leaderboardPlayers') {
     // ── Easter Egg: TheGlaiCat audio (45% de probabilidad) ──
-    if (playerData.name.trim().toLowerCase() === 'theglaicat' && Math.random() < 0.45) {
-        const _cata = new Audio('assets/img/cata.mp3');
-        _cata.play().catch(() => {});
-    }
+    playTheGlaiCatProfileAudio(playerData?.name);
 
     const modal = document.getElementById('player-modal');
     const modalContent = document.getElementById('player-modal-content');
