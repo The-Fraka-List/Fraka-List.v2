@@ -2,7 +2,7 @@
     "id": 7174110,
     "name": "The Ultimate Phase",
     "author": "Andromeda",
-    "creators": ["Andromeda, ZenthicAlpha, Crack, CreepyDash, Findexi, Tygrysek, Zobros, MaJackO, Giron, Cyclic, Loogiah, WOOGI1411, UserMatt18"],
+    "creators": ["Andromeda, ZenthicAlpha, Crack, CreepyDash and more"],
     "verifier": "Shiku",
     "verification": "https://www.youtube.com/watch?v=NkFuOK35kFE",
     "percentToQualify": "100",
@@ -31,6 +31,12 @@
             "link": "https://www.youtube.com/watch?v=gIlWvr5UR7s",
             "percent": 100,
             "hz": 240
+        },
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com",
+            "percent": 100,
+            "hz": 340
         }
     ]
 }
