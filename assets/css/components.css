@@ -612,13 +612,6 @@ html, body {
   background: var(--text-muted);
 }
 
-.rising-view-shell {
-  position: relative;
-  height: 100%;
-  min-height: 0;
-  box-sizing: border-box;
-}
-
 .rising-leaderboard-container {
   display: none;
   flex-direction: column;
@@ -635,6 +628,17 @@ html, body {
 
 .rising-leaderboard-container.active {
   display: flex;
+}
+
+.rising-leaderboard-container::-webkit-scrollbar {
+  width: 6px;
+}
+.rising-leaderboard-container::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-sm);
+}
+.rising-leaderboard-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .rising-leaderboard-hero {
