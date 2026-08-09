@@ -1,0 +1,20 @@
+{
+    "id": 12017252,
+    "name": "Rebellion",
+    "author": "Bryan1150",
+    "creators": [
+        "Bryan1150"
+    ],
+    "verifier": "Shiku",
+    "verification": "https://youtu.be/erSKJoZL4r0?si=ACwbjUJg8FOG9ptl",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Shiku",
+            "link": "https://youtu.be/erSKJoZL4r0?si=ACwbjUJg8FOG9ptl",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

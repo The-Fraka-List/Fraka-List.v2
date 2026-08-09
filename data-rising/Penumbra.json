@@ -1,0 +1,20 @@
+{
+    "id": 95248655,
+    "name": "Penumbra",
+    "author": "CHERRYTEAM",
+    "creators": [
+        "CHERRY TEAM"
+    ],
+    "verifier": "AssassinDarkEXE",
+    "verification": "https://youtu.be/dmjbLIrIRkU?si=Jl_LNz1U1iEtVFSS",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "AssassinDarkEXE",
+            "link": "https://youtu.be/dmjbLIrIRkU?si=Jl_LNz1U1iEtVFSS",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

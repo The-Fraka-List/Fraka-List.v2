@@ -1,0 +1,21 @@
+{
+    "id": 7899562,
+    "name": "Colorful OverNight",
+    "author": "WOOGI1411",
+    "creators": [
+        "WOOGI1411",
+        "Minus"
+    ],
+    "verifier": "Shiku",
+    "verification": "https://youtu.be/FqDkEPheWfs?si=b-mLR0hhLLT4J2Dm",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Shiku",
+            "link": "https://youtu.be/FqDkEPheWfs?si=b-mLR0hhLLT4J2Dm",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

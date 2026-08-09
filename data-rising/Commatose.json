@@ -1,0 +1,20 @@
+{
+    "id": 110653463,
+    "name": "Commatose",
+    "author": "rply",
+    "creators": [
+        "rply"
+    ],
+    "verifier": "Mei",
+    "verification": "https://youtu.be/ThSHRr3TuhQ",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Mei",
+            "link": "https://youtu.be/ThSHRr3TuhQ",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

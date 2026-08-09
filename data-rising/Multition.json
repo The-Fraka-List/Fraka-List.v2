@@ -1,0 +1,21 @@
+{
+    "id": 60660086,
+    "name": "Multition",
+    "author": "Mulpan",
+    "creators": [
+        "Mulpan",
+        "Partition"
+    ],
+    "verifier": "Dirinrex",
+    "verification": "https://youtu.be/wk5zGK-aETU?si=hwDahr97OodDaP_L",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Dirinrex",
+            "link": "https://youtu.be/wk5zGK-aETU?si=hwDahr97OodDaP_L",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

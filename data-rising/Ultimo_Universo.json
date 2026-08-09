@@ -1,0 +1,20 @@
+{
+    "id": 90090090,
+    "name": "Ultimo universo",
+    "author": "Nacho21",
+    "creators": [
+        "Nacho21"
+    ],
+    "verifier": "AssassinDarkEXE",
+    "verification": "https://youtu.be/V1w4k4KNMKE?si=VS3kVHrT7Naaa_uo",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "AssassinDarkEXE",
+            "link": "https://youtu.be/V1w4k4KNMKE?si=VS3kVHrT7Naaa_uo",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

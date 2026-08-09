@@ -1,0 +1,20 @@
+{
+    "id": 82824219,
+    "name": "MikuMikuMikuMiku",
+    "author": "OddMod",
+    "creators": [
+        "OddMod"
+    ],
+    "verifier": "Dirinrex",
+    "verification": "https://youtu.be/cKoFta3Flv0?si=LMzADMDuFxHjgEW8",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Dirinrex",
+            "link": "https://youtu.be/cKoFta3Flv0?si=LMzADMDuFxHjgEW8",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

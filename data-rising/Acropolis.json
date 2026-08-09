@@ -1,0 +1,26 @@
+{
+    "id": 5155022,
+    "name": "Acropolis",
+    "author": "Zobros",
+    "creators": [
+        "Zobros"
+    ],
+    "verifier": "Dirinrex",
+    "verification": "https://youtu.be/_Jv3UAcfyW0?si=tUDIMaI_GEXI36vb",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Dirinrex",
+            "link": "https://youtu.be/_Jv3UAcfyW0?si=tUDIMaI_GEXI36vb",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "elmatigeims",
+            "link": "https://youtu.be/39jy44ihuJ0",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}

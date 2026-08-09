@@ -1,0 +1,23 @@
+{
+    "id": 8491232,
+    "name": "Ultrasonic",
+    "author": "ZenthicAlpha",
+    "creators": [
+        "ZenthicAlpha",
+        "Gboy",
+        "Glitter",
+        "Evasium and more"
+    ],
+    "verifier": "Shiku",
+    "verification": "https://youtu.be/ti5UVIweCRE?si=wAUfNO80C33sDrHF",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Shiku",
+            "link": "https://youtu.be/ti5UVIweCRE?si=wAUfNO80C33sDrHF",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

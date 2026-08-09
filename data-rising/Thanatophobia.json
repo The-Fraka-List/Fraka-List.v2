@@ -1,0 +1,20 @@
+{
+    "id": 62809982,
+    "name": "Thanatophobia",
+    "author": "ARtu",
+    "creators": [
+        "ARtu"
+    ],
+    "verifier": "el_d0c1",
+    "verification": "https://youtu.be/81nHPofhQVc?si=fsh2J6GDkh4ZghT0",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "el_d0c1",
+            "link": "https://youtu.be/81nHPofhQVc?si=fsh2J6GDkh4ZghT0",
+            "percent": 100,
+            "hz": 280
+        }
+    ]
+}

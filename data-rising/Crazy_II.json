@@ -1,0 +1,20 @@
+{
+    "id": 47620786,
+    "name": "Crazy II",
+    "author": "DavJT",
+    "creators": [
+        "DavJT"
+    ],
+    "verifier": "AssassinDarkEXE",
+    "verification": "https://youtu.be/NUDtzq5AyvM?si=uTAfKwnhXQTpAj-H",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "AssassinDarkEXE",
+            "link": "https://youtu.be/NUDtzq5AyvM?si=uTAfKwnhXQTpAj-H",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

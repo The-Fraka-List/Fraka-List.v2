@@ -1,0 +1,20 @@
+{
+    "id": 4957691,
+    "name": "Windy Landscape",
+    "author": "WOOGI1411",
+    "creators": [
+        "WOOGI1411"
+    ],
+    "verifier": "Shiku",
+    "verification": "https://youtu.be/KcU0WPdAMh8?si=vPaK4gPPNeZH3WIl",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Shiku",
+            "link": "https://youtu.be/KcU0WPdAMh8?si=vPaK4gPPNeZH3WIl",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "id": 9145341,
+    "name": "8o",
+    "author": "Zobros",
+    "creators": [
+        "Zobros"
+    ],
+    "verifier": "el_d0c1",
+    "verification": "https://youtu.be/MR_A6E7W2OI?si=HSCnXoVyubrJDEQV",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "el_d0c1",
+            "link": "https://youtu.be/MR_A6E7W2OI?si=HSCnXoVyubrJDEQV",
+            "percent": 100,
+            "hz": 280
+        }
+    ]
+}

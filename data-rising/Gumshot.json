@@ -1,0 +1,20 @@
+{
+    "id": 75806677,
+    "name": "Gumshot",
+    "author": "qMystic",
+    "creators": [
+        "qMystic"
+    ],
+    "verifier": "Dirinrex",
+    "verification": "https://youtu.be/EuZF3LAwT1M?si=bJCocQNY587JXozI",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Dirinrex",
+            "link": "https://youtu.be/EuZF3LAwT1M?si=bJCocQNY587JXozI",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

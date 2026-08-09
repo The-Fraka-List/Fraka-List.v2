@@ -1,0 +1,23 @@
+{
+    "id": 4706930,
+    "name": "Supersonic",
+    "author": "ZenthicAlpha",
+    "creators": [
+        "ZenthicAlpha",
+        "Glitter",
+        "Jeyzor",
+        "Gboy and more"
+    ],
+    "verifier": "Shiku",
+    "verification": "https://youtu.be/Qq9B5ngPlwE?si=OgYwgHIvGmP7l3sJ",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Shiku",
+            "link": "https://youtu.be/Qq9B5ngPlwE?si=OgYwgHIvGmP7l3sJ",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

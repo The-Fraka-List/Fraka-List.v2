@@ -1,0 +1,23 @@
+{
+    "id": 10288836,
+    "name": "Ultraviolet",
+    "author": "ViPriN",
+    "creators": [
+        "ViPriN",
+        "Hinds",
+        "Xaro",
+        "Mazl and more"
+    ],
+    "verifier": "Shiku",
+    "verification": "https://youtu.be/K81oo0KxFW8?si=QC6GY91gNK4bxU5B",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Shiku",
+            "link": "https://youtu.be/K81oo0KxFW8?si=QC6GY91gNK4bxU5B",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

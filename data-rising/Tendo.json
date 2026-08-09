@@ -1,0 +1,21 @@
+{
+    "id": 67018065,
+    "name": "Tendo",
+    "author": "gradientxd",
+    "creators": [
+        "hadeon",
+        "gradientxd"
+    ],
+    "verifier": "Dirinrex",
+    "verification": "https://youtu.be/mOu1RW4ZNpk?si=uDxw_h0Bd6CxfaOx",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Dirinrex",
+            "link": "https://youtu.be/mOu1RW4ZNpk?si=uDxw_h0Bd6CxfaOx",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "id": 17042469,
+    "name": "Exploring Space",
+    "author": "Sumsar",
+    "creators": [
+        "Sumsar"
+    ],
+    "verifier": "Shiku",
+    "verification": "https://youtu.be/5CYBCKJEgLI?si=MfH90xRzdZ1iJZW-",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Shiku",
+            "link": "https://youtu.be/5CYBCKJEgLI?si=MfH90xRzdZ1iJZW-",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

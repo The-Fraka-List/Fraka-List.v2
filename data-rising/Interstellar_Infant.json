@@ -1,0 +1,20 @@
+{
+    "id": 65496280,
+    "name": "Interstellar Infant",
+    "author": "Fault",
+    "creators": [
+        "Fault"
+    ],
+    "verifier": "Elnico_gdxd",
+    "verification": "https://youtu.be/W7cj2zoi6Qs?si=Ymo5atHAITpVwKQWhttps://youtu.be/Z7LhFAdUR5w?si=UvNUHb_sL6AfJVTuhttps://youtu.be/3RYVSo77lKs?si=BflGUUrTLFeFJMEV",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Elnico_gdxd",
+            "link": "https://youtu.be/W7cj2zoi6Qs?si=Ymo5atHAITpVwKQWhttps://youtu.be/Z7LhFAdUR5w?si=UvNUHb_sL6AfJVTuhttps://youtu.be/3RYVSo77lKs?si=BflGUUrTLFeFJMEV",
+            "percent": 100,
+            "hz": 100
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "id": 2241592,
+    "name": "Necropolis",
+    "author": "IIINePtunEIII",
+    "creators": [
+        "IIINePtunEIII"
+    ],
+    "verifier": "Shiku",
+    "verification": "https://youtu.be/lq_I0qg34QU?si=eVOgGZIvv2jGFh9i",
+    "percentToQualify": "100",
+    "password": "free",
+    "records": [
+        {
+            "user": "Shiku",
+            "link": "https://youtu.be/lq_I0qg34QU?si=eVOgGZIvv2jGFh9i",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
