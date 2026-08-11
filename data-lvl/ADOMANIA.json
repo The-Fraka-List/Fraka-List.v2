@@ -4,13 +4,13 @@
     "author": "Swib",
     "creators": ["Swib"],
     "verifier": "TheGlaiCat",
-    "verification": "https://www.youtube.com/watch?v=Glz7wrZEAH0&t=8s",
+    "verification": "https://youtu.be/Glz7wrZEAH0?si=QR1bn6BaVtsE0Co5",
     "percentToQualify": "100",
     "password": "Free To Copy",
     "records": [
         {
             "user": "TheGlaiCat",
-            "link": "https://www.youtube.com/watch?v=Glz7wrZEAH0&t=8s",
+            "link": "https://youtu.be/Glz7wrZEAH0?si=QR1bn6BaVtsE0Co5",
             "percent": 100,
             "hz": 120
         }
