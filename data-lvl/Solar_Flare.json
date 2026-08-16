@@ -1,0 +1,18 @@
+{
+    "id": 90390075,
+    "name": "Solar Flare",
+    "author": "Linear2",
+    "creators": ["Linear & Ryno"],
+    "verifier": "Fiumba_47",
+    "verification": "https://youtu.be/rDdnROjX3Ak?si=289n7vO75Kgyum7l",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Fiumba_47",
+            "link": "https://youtu.be/rDdnROjX3Ak?si=289n7vO75Kgyum7l",
+            "percent": 100,
+            "hz": 75
+        }
+    ]
+}
