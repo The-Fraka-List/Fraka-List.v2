@@ -1,0 +1,18 @@
+{
+    "id": 63775846,
+    "name": "Forbidden Isle",
+    "author": "Sillow",
+    "creators": ["Sillow"],
+    "verifier": "Kepta_bb",
+    "verification": "https://www.youtube.com/watch?v=UklZvPTRRSw",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Kepta_bb",
+            "link": "https://www.youtube.com/watch?v=UklZvPTRRSw",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}
