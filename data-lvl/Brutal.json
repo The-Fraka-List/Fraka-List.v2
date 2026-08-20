@@ -37,6 +37,12 @@
             "link": "https://www.youtube.com/watch?v=QwJ4W2QvZhg",
             "percent": 100,
             "hz": 360
+        },
+        {
+            "user": "TheGlaicat",
+            "link": "https://www.youtube.com/watch?v=LuiP4lA1UhU",
+            "percent": 100,
+            "hz": 60
         }
     ]
 }
