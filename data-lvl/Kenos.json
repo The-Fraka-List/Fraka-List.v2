@@ -1,0 +1,18 @@
+{
+    "id": 97183213,
+    "name": "Kenos",
+    "author": "BIANOX",
+    "creators": ["BIANOX, Spectex, Pennutoh, Zimnior12 and more"],
+    "verifier": "AleezCourtz",
+    "verification": "https://www.youtube.com/watch?v=Q1BTvR9YwMU",
+    "percentToQualify": "57",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "AleezCourtz",
+            "link": "https://www.youtube.com/watch?v=Q1BTvR9YwMU",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
