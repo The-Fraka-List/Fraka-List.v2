@@ -1,0 +1,18 @@
+{
+    "id": 72315402,
+    "name": "arcturus",
+    "author": "maxfs",
+    "creators": ["maxfs"],
+    "verifier": "Fiumba_47",
+    "verification": "https://www.youtube.com/watch?v=qLAYPNwAwUw",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Fiumba_47",
+            "link": "https://www.youtube.com/watch?v=qLAYPNwAwUw",
+            "percent": 100,
+            "hz": 75
+        }
+    ]
+}

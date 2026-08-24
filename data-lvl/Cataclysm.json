@@ -80,8 +80,14 @@
             "percent": 100,
             "hz": 240
         },
+         {
+            "user": "Ares",
+            "link": "https://www.youtube.com/watch?v=CLTT1ONrZGo",
+            "percent": 100,
+            "hz": 60
+        },
         {
-            "user": "serrod_rawr",
+            "user": "Serrod11",
             "link": "https://www.youtube.com/watch?v=wiokiQpBagw",
             "percent": 100,
             "hz": 240
