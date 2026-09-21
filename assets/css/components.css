@@ -1014,11 +1014,31 @@ body.legacy-mode .copy-toast {
 
 .fdm-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-6);
     padding: var(--space-4);
     max-width: 1440px;
     margin: 0 auto;
+}
+
+#tab-frk-dm {
+    height: calc(100vh - var(--nav-height));
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+#tab-frk-dm::-webkit-scrollbar {
+    width: 6px;
+}
+
+#tab-frk-dm::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: var(--radius-sm);
+}
+
+#tab-frk-dm::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
 }
 
 .fdm-card {

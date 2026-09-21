@@ -1,0 +1,29 @@
+[
+  {
+    "title": "Fraka del mes - AGOSTO 2026",
+    "subtitle": "La competencia por el mejor llegó a su fin.",
+    "winner": "Fiumba",
+    "banner": "assets/img/banners/fiumba.png",
+    "info": "La botacion fue clara, Fiumba ganó por amplio margen segundos despues de subir la encuesta.",
+    "subinfo": "felicidades a Fiumba por lograr tal asaña! suerte en el siguiente mes, y a todos los que participaron, gracias por su apoyo.",
+    "votes": [
+      {
+        "voter": "fiumba",
+        "score": 17
+      },
+      {
+        "voter": "Aleez",
+        "score": 3
+      },
+      {
+        "voter": "xReizer",
+        "score": 13
+      },
+      {
+        "voter": "elmatigeims",
+        "score": 2
+      }
+    ],
+    "video": "https://www.youtube.com/watch?v=wYUIwNEgU18"
+  }
+]

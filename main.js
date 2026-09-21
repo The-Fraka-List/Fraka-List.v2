@@ -889,6 +889,25 @@ function renderSidebar() {
 }
 
 function filterLevels(searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+
+    if (term !== '') {
+        const matchingNames = globalLevels.filter(level =>
+            typeof level.name === 'string' && level.name.toLowerCase().includes(term)
+        );
+        const matchingModes = new Set(
+            matchingNames.map(level => level.rank > LEGACY_THRESHOLD)
+        );
+
+        if (matchingModes.size === 1) {
+            const shouldUseLegacy = matchingModes.has(true);
+            if (shouldUseLegacy !== legacyMode) {
+                toggleLegacyMode();
+                return;
+            }
+        }
+    }
+
     filtrarNivelesEnSidebar(getVisibleLevels(globalLevels), searchTerm, 'levels-sidebar', 'sidebar-item-', mostrarDetallesNivel);
 }
 
