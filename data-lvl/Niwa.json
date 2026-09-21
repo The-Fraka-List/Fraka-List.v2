@@ -68,11 +68,23 @@
             "percent": 100,
             "hz": 120
         },
-         {
+        {
             "user": "Fabygamer",
             "link": "https://www.youtube.com/watch?v=o3UZscXY1u4",
             "percent": 100,
             "hz": 60
+        },
+        {
+            "user": "el_d0c1",
+            "link": "https://www.youtube.com/watch?v=BbIeCyJKDgs",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "NotSparture",
+            "link": "https://youtu.be/GomRxoAezTo",
+            "percent": 100,
+            "hz": 190
         }
     ]
 }

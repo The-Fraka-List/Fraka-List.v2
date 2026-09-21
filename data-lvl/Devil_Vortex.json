@@ -1,0 +1,20 @@
+{
+    "id": 32969607,
+    "name": "Devil Vortex",
+    "author": "Rustam",
+    "creators": [
+        "Rustam"
+    ],
+    "verifier": "S3b4s506_",
+    "verification": "https://www.youtube.com/watch?v=QmzkPz9F0JI",
+    "percentToQualify": "180",
+    "password": "THE GAME",
+    "records": [
+        {
+            "user": "S3b4s506_",
+            "link": "https://www.youtube.com/watch?v=QmzkPz9F0JI",
+            "percent": 100,
+            "hz": 180
+        }
+    ]
+}

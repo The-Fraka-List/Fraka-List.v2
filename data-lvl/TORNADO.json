@@ -2,7 +2,7 @@
     "id": 83098728,
     "name": "TORNADO",
     "author": "BIANOX",
-    "creators": ["BIANOX, gdsauzzeth, Marwec, Grindex, Buragoz, BuckenDoof, Jenkins, Scrumpy, para, FerdeFunky, Woom, ARtu, EyeoftheStorm, koolboom, ZeroSR, Thomartin, Vlacc and Tchotchke"],
+    "creators": ["BIANOX, gdsauzzeth, Marwec, koolboom, ZeroSR and more"],
     "verifier": "S3b4s506_",
     "verification": "https://www.youtube.com/watch?v=NbilQ62SZhQ",
     "percentToQualify": "100",
@@ -11,6 +11,12 @@
         {
             "user": "S3b4s506_",
             "link": "https://www.youtube.com/watch?v=NbilQ62SZhQ",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "Benja_dark",
+            "link": "https://youtu.be/Bli-kFELaSU?si=7JTYB9g8bb3xKuMg",
             "percent": 100,
             "hz": 120
         }

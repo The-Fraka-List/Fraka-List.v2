@@ -1,0 +1,21 @@
+{
+    "id": 72082021,
+    "name": "Pandemonium (Yakimaru)",
+    "author": "Yakimaru",
+    "creators": [
+        "Yakimaru",
+        "Terron"
+    ],
+    "verifier": "xReizer",
+    "verification": "https://youtu.be/iVOaObZ39aE?si=sUwhzFt6xcoMGXN0",
+    "percentToQualify": "120",
+    "password": "six seven",
+    "records": [
+        {
+            "user": "xReizer",
+            "link": "https://youtu.be/iVOaObZ39aE?si=sUwhzFt6xcoMGXN0",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}
