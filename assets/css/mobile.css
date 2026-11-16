@@ -756,3 +756,162 @@
         padding: var(--space-4);
     }
 }
+
+/* ── List y Rising: vista móvil de lista/detalle ── */
+@media (max-width: 899px) {
+    #tab-profile.active {
+        position: relative;
+        inset: auto;
+        width: auto;
+        min-height: calc(100vh - var(--nav-height));
+        min-height: calc(100dvh - var(--nav-height));
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    #tab-list.active,
+    #tab-rising.active {
+        position: fixed !important;
+        inset: var(--nav-height) 0 auto !important;
+        z-index: 1;
+        width: 100%;
+        max-width: none;
+        height: calc(100vh - var(--nav-height)) !important;
+        height: calc(100dvh - var(--nav-height)) !important;
+        min-height: 0 !important;
+        margin: 0;
+        padding: 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box;
+    }
+
+    #tab-list .list-layout,
+    #tab-rising .list-layout {
+        display: block !important;
+        height: 100% !important;
+        min-height: 0;
+        padding: 0 !important;
+        overflow: hidden;
+    }
+
+    #tab-rising .rising-view-shell {
+        height: 100% !important;
+        min-height: 0 !important;
+    }
+
+    #tab-rising .rising-leaderboard-container {
+        height: 100% !important;
+        padding: var(--space-4) var(--space-3) !important;
+    }
+
+    #tab-list .sidebar-list-wrapper,
+    #tab-rising .sidebar-list-wrapper {
+        height: 100%;
+        min-height: 0;
+        padding: var(--space-3);
+        box-sizing: border-box;
+    }
+
+    #tab-list .level-search-container,
+    #tab-rising .level-search-container {
+        flex: 0 0 auto;
+        min-height: 44px;
+        margin-bottom: var(--space-2);
+    }
+
+    #tab-list .level-search-input,
+    #tab-rising .level-search-input {
+        min-height: 44px;
+    }
+
+    #tab-list .legacy-toggle-btn,
+    #tab-rising .legacy-toggle-btn {
+        min-height: 44px;
+        box-sizing: border-box;
+    }
+
+    #tab-list #levels-sidebar,
+    #tab-rising #rising-sidebar {
+        flex: 1 1 auto;
+        height: auto !important;
+        min-height: 0;
+        max-height: none !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+        padding: 0 2px 0 0 !important;
+    }
+
+    #tab-list #level-details,
+    #tab-rising #rising-details {
+        display: none !important;
+        width: 100%;
+        height: 100% !important;
+        min-height: 0;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+        padding: var(--space-3) !important;
+        box-sizing: border-box;
+    }
+
+    #tab-list.mobile-detail-open .sidebar-list-wrapper,
+    #tab-rising.mobile-detail-open .sidebar-list-wrapper {
+        display: none !important;
+    }
+
+    #tab-list.mobile-detail-open #level-details,
+    #tab-rising.mobile-detail-open #rising-details {
+        display: block !important;
+    }
+
+    #tab-list #levels-sidebar .level-card,
+    #tab-rising #rising-sidebar .level-card {
+        height: 76px;
+        min-height: 76px;
+        flex: 0 0 76px;
+        box-sizing: border-box;
+    }
+
+    #tab-list .mobile-detail-back,
+    #tab-rising .mobile-detail-back {
+        position: sticky;
+        top: calc(-1 * var(--space-3));
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        width: max-content;
+        margin: calc(-1 * var(--space-3)) 0 var(--space-3);
+        padding: 0 var(--space-3);
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        font-size: var(--font-base);
+        cursor: pointer;
+    }
+
+    #tab-list .mobile-detail-back:focus-visible,
+    #tab-rising .mobile-detail-back:focus-visible {
+        outline: 2px solid var(--accent-light);
+        outline-offset: 2px;
+    }
+
+    #tab-list .level-meta-grid,
+    #tab-rising .level-meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    #tab-list .level-meta-grid > div,
+    #tab-rising .level-meta-grid > div {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    #tab-list iframe,
+    #tab-rising iframe {
+        max-width: 100%;
+    }
+}
