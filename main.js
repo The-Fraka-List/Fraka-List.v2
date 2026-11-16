@@ -16,6 +16,10 @@ let currentProfileUsername = null;
 // Contexto de lista activo para la tarjeta de perfil: si el usuario entra a
 // un perfil desde List o Rising, la barra de progreso usa esa lista como base.
 let currentProfileListContext = 'list';
+let currentProfileLevelId = null;
+let profileSidebarScrollTop = 0;
+let profileLegacyMode = false;
+let profileLevelSearchTerm = '';
 // El interruptor en RISING no controla Legacy (no existe en este apartado):
 // alterna entre la lista de niveles y la leaderboard propia de RISING.
 let risingLeaderboardVisible = false;
@@ -27,6 +31,51 @@ function getVisibleLevels(levels) {
     return legacyMode
         ? levels.filter(n => n.rank > LEGACY_THRESHOLD)
         : levels.filter(n => n.rank <= LEGACY_THRESHOLD);
+}
+
+function getLevelSlug(level) {
+    return level.name
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+}
+
+function setMobileDetailView(route, isOpen) {
+    ['list', 'rising'].forEach(sectionRoute => {
+        const section = document.getElementById(`tab-${sectionRoute}`);
+        if (section) section.classList.toggle('mobile-detail-open', isOpen && route === sectionRoute);
+    });
+
+    document.querySelectorAll('#levels-sidebar, #rising-sidebar').forEach(sidebar => {
+        sidebar.classList.remove('mobile-hidden');
+    });
+    document.querySelectorAll('#level-details, #rising-details').forEach(detail => {
+        detail.classList.remove('mobile-active');
+    });
+}
+
+function volverALista(route) {
+    if (route === 'profile') {
+        const layout = document.querySelector('#profile-mini-list .profile-mini-layout');
+        if (layout) {
+            layout.classList.remove('mobile-detail-open');
+            const sidebar = document.getElementById('profile-level-sidebar');
+            const scrollTop = profileSidebarScrollTop;
+            if (sidebar) {
+                requestAnimationFrame(() => {
+                    if (sidebar.isConnected) sidebar.scrollTop = scrollTop;
+                });
+            }
+        }
+        return;
+    }
+
+    const section = document.getElementById(`tab-${route}`);
+    if (section) section.classList.remove('mobile-detail-open');
+    setMobileDetailView(route, false);
+    window.history.replaceState(window.history.state, '', `#/${route}`);
 }
 
 function updateListLabel(isLegacy) {
@@ -80,7 +129,7 @@ function toggleLegacyMode() {
         const primerNivelVisible = legacyMode
             ? globalLevels.find(n => n.rank === LEGACY_THRESHOLD + 1)
             : globalLevels.find(n => n.rank === 1);
-        if (primerNivelVisible) mostrarDetallesNivel(primerNivelVisible.id);
+        if (primerNivelVisible) mostrarDetallesNivel(primerNivelVisible.id, false);
     }
 }
 
@@ -218,123 +267,263 @@ function handleAvatarError(imgEl) {
     imgEl.src = AVATAR_DEFAULT_SRC;
 }
 
-// Panel izquierdo (Records). Todos los datos salen de window.leaderboardPlayers,
-// que ya lo calcula renderLeaderboard() sobre globalLevels (Main List completa,
-// #list + legacy incluidos: renderLeaderboard no filtra por getVisibleLevels,
-// así que un nivel Top 151+ aporta puntos/victorias/hardest igual que uno
-// Top 1-150). No se escribe ningún dato a mano: si window.leaderboardPlayers
-// todavía no se calculó (carga inicial en curso), se muestra vacío y
-// inicializarSitio() vuelve a llamar a esta función apenas termina de cargar.
+// Las estadísticas consultan el leaderboard de origen del perfil para evitar
+// mezclar la Main List con Rising.
 function renderPlayerProfileStats(username) {
-    const panel = document.getElementById('profile-side-panel');
+    const panel = document.getElementById('profile-stats-container');
     if (!panel) return;
 
-    const rankedPlayers = window.leaderboardPlayers || [];
-    const rankIndex = rankedPlayers.findIndex(p => p.name === username);
-    const player = rankIndex !== -1 ? rankedPlayers[rankIndex] : null;
-
-    const rankingLabel = player ? `#${rankIndex + 1}` : '—';
-    const totalPoints = player ? player.points.toFixed(2) : '0.00';
-    const victories = player ? player.completions : 0;
-
-    const top3Hardest = player && Array.isArray(player.completedLevels)
-        ? [...player.completedLevels].sort((a, b) => a.rank - b.rank).slice(0, 3)
+    const profileData = getProfileContextData(username);
+    const player = profileData.player;
+    const completedLevels = player && Array.isArray(player.completedLevels)
+        ? [...player.completedLevels].sort((a, b) => a.rank - b.rank)
         : [];
-
-    const hardestHTML = top3Hardest.length > 0
-        ? top3Hardest.map(level => `
-            <div class="profile-stat-hardest-item">
-                <span class="profile-stat-hardest-name">${level.level}</span>
-                <span class="profile-stat-hardest-rank">Top ${level.rank}</span>
-            </div>
-        `).join('')
-        : `<div class="profile-stat-hardest-empty">Sin completados todavía.</div>`;
+    const progressData = getPlayerProfileProgressData(username);
+    const hardest = completedLevels[0] || null;
+    const hardestRecordLink = hardest && typeof hardest.video === 'string' && hardest.video.trim()
+        ? hardest.video
+        : '';
+    const percentageValue = player && progressData.percentage !== null
+        ? `${progressData.percentage}%`
+        : '—';
+    const pointLabel = profileData.source === 'rising' ? 'Puntos de Rising' : 'Puntos de lista';
+    const completionLabel = profileData.source === 'rising'
+        ? 'Extremes completados (Rising)'
+        : 'Extremes completados (List + Legacy)';
+    const hardestValue = hardest
+        ? hardestRecordLink
+            ? `<a class="profile-stat-card__link" href="${hardestRecordLink}" target="_blank" rel="noopener noreferrer">${hardest.level}</a>`
+            : hardest.level
+        : '—';
 
     panel.innerHTML = `
-        <h3 class="profile-panel__title">Records</h3>
+        <article class="profile-stat-card">
+            <span class="profile-stat-card__value">${player ? player.points.toFixed(2) : '—'}</span>
+            <span class="profile-stat-card__label">${pointLabel}</span>
+        </article>
+        <article class="profile-stat-card">
+            <span class="profile-stat-card__value">${percentageValue}</span>
+            <span class="profile-stat-card__label">${progressData.statLabel}</span>
+        </article>
+        <article class="profile-stat-card">
+            <span class="profile-stat-card__value">${player ? completedLevels.length : '—'}</span>
+            <span class="profile-stat-card__label">${completionLabel}</span>
+        </article>
+        <article class="profile-stat-card${hardestRecordLink ? ' profile-stat-card--linked' : ''}">
+            <span class="profile-stat-card__value profile-stat-card__value--hardest">${hardestValue}</span>
+            <span class="profile-stat-card__label">Hardest</span>
+        </article>
+    `;
 
-        <div class="profile-stat-row">
-            <span class="profile-stat-label">Ranking Leader</span>
-            <span class="profile-stat-value">${rankingLabel}</span>
-        </div>
+    renderPlayerProfileProgress(username, progressData);
+}
 
-        <div class="profile-stat-row">
-            <span class="profile-stat-label">Puntos de lista</span>
-            <span class="profile-stat-value">${totalPoints}</span>
-        </div>
+function getPlayerProfileProgressData(username) {
+    const profileData = getProfileContextData(username);
+    const completedLevels = profileData.player && Array.isArray(profileData.player.completedLevels)
+        ? profileData.player.completedLevels
+        : [];
+    const isRising = profileData.source === 'rising';
+    const count = profileData.player
+        ? isRising
+            ? completedLevels.length
+            : completedLevels.filter(level => level.rank <= 150).length
+        : null;
+    const denominator = isRising ? profileData.levels.length : 150;
+    const percentage = count !== null && denominator > 0
+        ? ((count / denominator) * 100).toFixed(2)
+        : null;
 
-        <div class="profile-stat-row">
-            <span class="profile-stat-label">Victorias</span>
-            <span class="profile-stat-value">${victories}</span>
-        </div>
+    return {
+        count,
+        denominator,
+        percentage,
+        source: profileData.source,
+        label: count === null
+            ? '—'
+            : isRising
+                ? `${count}/${denominator} Rising`
+                : `${count}/150 Main List`,
+        statLabel: isRising
+            ? `Progreso de Rising (${count === null ? '—' : `${count}/${denominator}`})`
+            : 'Progreso de lista (Top 1–150)'
+    };
+}
 
-        <div class="profile-stat-hardest-block">
-            <span class="profile-stat-label">Top 3 Hardest</span>
-            <div class="profile-stat-hardest-list">
-                ${hardestHTML}
+function renderPlayerProfileProgress(username, progressData) {
+    const container = document.getElementById('profile-progress-container');
+    if (!container) return;
+
+    const progressLabel = progressData.label;
+    const progressTag = progressData.source === 'rising' ? 'Rising' : 'Main List';
+    const percent = progressData.percentage || 0;
+
+    container.innerHTML = `
+        <div class="profile-card__progress-block">
+            <h2 class="profile-progress-title">Progreso de colección</h2>
+            <div class="profile-card__progress-label">
+                <span class="profile-card__progress-count">${progressLabel}</span>
+                <span class="profile-card__progress-tag">${progressTag}</span>
+            </div>
+            <div
+                class="profile-card__progress-track"
+                role="progressbar"
+                aria-label="Progreso de colección de ${username}"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="${percent}"
+            >
+                <div class="profile-card__progress-fill" style="width: ${percent}%;"></div>
             </div>
         </div>
     `;
 }
 
-// Panel central: lista de niveles completados por el jugador en la Main
-// List. Reutiliza EXACTAMENTE el mismo diseño de tarjeta que el listado
-// principal (misma clase 'card level-card' y mismo markup interno que arma
-// renderNivelesEnSidebar), pero NO usa esa función ni su onClickFn
-// (mostrarDetallesNivel): acá el click abre el popup de confirmación del
-// video, nunca el panel de detalle de nivel. El listado principal
-// (#levels-sidebar) no se toca en ningún punto de esta función.
+// La mini lista de perfil usa los mismos renderers de sidebar y detalle que
+// List/Rising, limitada a los niveles completados por el jugador.
 function renderPlayerProfileLevels(username) {
     const container = document.getElementById('profile-levels-container');
     if (!container) return;
 
-    const rankedPlayers = window.leaderboardPlayers || [];
-    const player = rankedPlayers.find(p => p.name === username);
-    const completedLevels = (player && Array.isArray(player.completedLevels))
-        ? [...player.completedLevels].sort((a, b) => a.rank - b.rank)
+    profileSidebarScrollTop = 0;
+    const profileData = getProfileContextData(username);
+    const completedRecords = profileData.player && Array.isArray(profileData.player.completedLevels)
+        ? [...profileData.player.completedLevels].sort((a, b) => a.rank - b.rank)
         : [];
+    const completedRanks = new Set(completedRecords.map(level => level.rank));
+    const completedLevels = profileData.levels
+        .filter(level => completedRanks.has(level.rank))
+        .sort((a, b) => a.rank - b.rank);
 
-    container.innerHTML = '';
+    profileLegacyMode = false;
+    profileLevelSearchTerm = '';
+    currentProfileLevelId = completedLevels[0] ? completedLevels[0].id : null;
 
     if (completedLevels.length === 0) {
         container.innerHTML = `
-            <div style="padding: var(--space-6); text-align: center; color: var(--text-muted);">
-                Este jugador todavía no completó niveles de la Main List.
-            </div>
+            <section class="profile-completed-section">
+                <h2 class="profile-section-title">Niveles completados</h2>
+                <p class="profile-completed-empty">
+                    ${profileData.source === 'rising'
+                        ? 'Este jugador todavía no completó niveles de Rising.'
+                        : 'Este jugador todavía no completó niveles de la Main List.'}
+                </p>
+            </section>
         `;
         return;
     }
 
-    completedLevels.forEach(completado => {
-        // completedLevels solo trae {level, rank, video}; se cruza con
-        // globalLevels por rank para recuperar autor/creators, igual que
-        // hace el listado principal.
-        const nivelCompleto = globalLevels.find(n => n.rank === completado.rank);
-        const autor = nivelCompleto
-            ? getCreatorPrimary(nivelCompleto.creators, nivelCompleto.author)
-            : 'Desconocido';
-
-        const item = document.createElement('div');
-        item.className = 'card level-card';
-        item.style.marginBottom = 'var(--space-3)';
-        item.style.cursor = 'pointer';
-        item.style.display = 'flex';
-        item.style.alignItems = 'center';
-        item.style.gap = 'var(--space-4)';
-        item.style.padding = 'var(--space-4)';
-
-        item.onclick = () => openPlayerVideoConfirm(username, completado.video);
-
-        item.innerHTML = `
-            <div class="text-accent text-mono" style="font-size: 1.3rem; font-weight: 700; min-width: 45px;">#${completado.rank}</div>
-            <div style="flex: 1;">
-                <div class="text-display" style="font-weight: 600; font-size: 1.15rem; color: var(--text-primary); line-height: 1.2;">${completado.level}</div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">por ${autor}</div>
+    container.innerHTML = `
+        <section class="profile-completed-section profile-mini-list" id="profile-mini-list">
+            <div class="profile-completed-heading">
+                <h2 class="profile-section-title">Niveles completados</h2>
+                <div class="level-search-container profile-mini-controls">
+                    <input
+                        type="search"
+                        id="profile-level-search"
+                        class="level-search-input"
+                        placeholder="Buscar nivel..."
+                        aria-label="Buscar niveles completados"
+                    >
+                    ${profileData.source === 'list' ? `
+                        <button
+                            type="button"
+                            id="profile-legacy-toggle"
+                            class="legacy-toggle-btn"
+                            aria-pressed="false"
+                            aria-label="Alternar niveles Legacy"
+                        >
+                            <span class="legacy-toggle-track"><span class="legacy-toggle-thumb"></span></span>
+                            <span class="legacy-toggle-label">Legacy</span>
+                        </button>
+                    ` : ''}
+                </div>
             </div>
-        `;
+            <div class="profile-mini-layout">
+                <aside class="profile-mini-sidebar sidebar-list-wrapper">
+                    <div class="sidebar-list" id="profile-level-sidebar"></div>
+                </aside>
+                <div class="profile-mini-details" id="profile-level-details"></div>
+            </div>
+        </section>
+    `;
 
-        container.appendChild(item);
+    const searchInput = document.getElementById('profile-level-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', event => {
+            profileLevelSearchTerm = event.target.value;
+            renderProfileCompletedSidebar(username, profileData, completedLevels);
+        });
+    }
+
+    const legacyToggle = document.getElementById('profile-legacy-toggle');
+    if (legacyToggle) {
+        legacyToggle.addEventListener('click', () => {
+            profileLegacyMode = !profileLegacyMode;
+            legacyToggle.classList.toggle('active', profileLegacyMode);
+            legacyToggle.setAttribute('aria-pressed', String(profileLegacyMode));
+            const miniList = document.getElementById('profile-mini-list');
+            if (miniList) miniList.classList.toggle('legacy-mode', profileLegacyMode);
+            renderProfileCompletedSidebar(username, profileData, completedLevels);
+        });
+    }
+
+    renderProfileCompletedSidebar(username, profileData, completedLevels);
+}
+
+function renderProfileCompletedSidebar(username, profileData, completedLevels) {
+    const sidebar = document.getElementById('profile-level-sidebar');
+    if (!sidebar) return;
+
+    const visibleLevels = profileData.source === 'list'
+        ? completedLevels.filter(level => profileLegacyMode ? level.rank > LEGACY_THRESHOLD : level.rank <= LEGACY_THRESHOLD)
+        : completedLevels;
+    const selectedLevel = visibleLevels.find(level => level.id === currentProfileLevelId)
+        || visibleLevels[0]
+        || null;
+    currentProfileLevelId = selectedLevel ? selectedLevel.id : null;
+
+    filtrarNivelesEnSidebar(
+        visibleLevels,
+        profileLevelSearchTerm,
+        'profile-level-sidebar',
+        'profile-level-item-',
+        id => mostrarDetallePerfilNivel(id, username, profileData),
+        currentProfileLevelId
+    );
+
+    const detailPanel = document.getElementById('profile-level-details');
+    if (selectedLevel && detailPanel) {
+        mostrarDetallePerfilNivel(selectedLevel.id, username, profileData, false);
+    } else if (detailPanel) {
+        const message = visibleLevels.length === 0 && profileLevelSearchTerm.trim() === ''
+            ? profileLegacyMode
+                ? 'Este jugador no tiene niveles Legacy completados.'
+                : 'Este jugador no tiene niveles principales completados.'
+            : 'No hay niveles que coincidan con la búsqueda.';
+        detailPanel.innerHTML = `<p class="profile-completed-empty">${message}</p>`;
+    }
+}
+
+function mostrarDetallePerfilNivel(idNivel, username, profileData, openMobile = true) {
+    const nivel = profileData.levels.find(level => level.id === idNivel);
+    if (!nivel) return;
+
+    currentProfileLevelId = nivel.id;
+    document.querySelectorAll('#profile-level-sidebar .level-card').forEach(item => {
+        const isCurrent = item.id === `profile-level-item-${idNivel}`;
+        item.classList.toggle('active', isCurrent);
+        if (isCurrent) item.setAttribute('aria-current', 'true');
+        else item.removeAttribute('aria-current');
     });
+    renderDetalleNivel(nivel, 'profile-level-details', username);
+
+    if (openMobile && window.innerWidth < 900) {
+        const sidebar = document.getElementById('profile-level-sidebar');
+        if (sidebar) profileSidebarScrollTop = sidebar.scrollTop;
+        const layout = document.querySelector('#profile-mini-list .profile-mini-layout');
+        if (layout) layout.classList.add('mobile-detail-open');
+    }
 }
 
 // ── Popup "¿Ir al video del jugador...?" ──────────────────────────────
@@ -386,85 +575,68 @@ function renderPlayerProfileLayout(username) {
     if (!container) return;
 
     container.innerHTML = `
-        <div class="profile-layout">
-            <aside class="profile-panel profile-panel--left" id="profile-side-panel"></aside>
-            <div class="profile-panel profile-panel--center" id="profile-levels-container"></div>
-            <aside class="profile-panel profile-panel--right" id="profile-card-container"></aside>
-        </div>
-
-        <!-- Indicadores del carrusel: SOLO tienen efecto visual en mobile
-             (ver .profile-carousel-dots en components.css/mobile.css). En
-             escritorio quedan con display:none, sin ningún impacto. El
-             orden de los puntos sigue el orden VISUAL del swipe (Perfil,
-             Lista, Estadísticas), que es el que define 'order' en
-             mobile.css, no el orden del DOM de arriba. -->
-        <div class="profile-carousel-dots" id="profile-carousel-dots">
-            <span class="profile-carousel-dot active" data-panel="profile-card-container"></span>
-            <span class="profile-carousel-dot" data-panel="profile-levels-container"></span>
-            <span class="profile-carousel-dot" data-panel="profile-side-panel"></span>
+        <div class="profile-page">
+            <section class="profile-header" id="profile-card-container"></section>
+            <section class="profile-progress-section" id="profile-progress-container"></section>
+            <section class="profile-stats-grid" id="profile-stats-container"></section>
+            <div id="profile-levels-container"></div>
         </div>
     `;
 
     renderPlayerProfileStats(username);
     renderPlayerProfileLevels(username);
     renderPlayerProfileCard(username);
-    initProfileCarouselDots();
 }
 
-// Sincroniza los puntitos del carrusel con la sección visible. Escucha el
-// scroll horizontal de .profile-layout: en escritorio ese contenedor es un
-// grid fijo sin overflow-x, así que el evento 'scroll' prácticamente no
-// dispara ahí, y aunque disparara, los puntos están en display:none — cero
-// efecto sobre el comportamiento de escritorio, no hace falta ningún chequeo
-// de isMobile().
-function initProfileCarouselDots() {
-    const scroller = document.querySelector('#tab-profile .profile-layout');
-    const dots = document.querySelectorAll('#profile-carousel-dots .profile-carousel-dot');
-    if (!scroller || dots.length === 0) return;
+function getProfileContextData(username, source = currentProfileListContext) {
+    const isRising = source === 'rising';
+    const players = isRising
+        ? (window.risingLeaderboardPlayers || [])
+        : (window.leaderboardPlayers || []);
+    const levels = isRising ? globalRisingLevels : globalLevels;
+    const rankIndex = players.findIndex(player => player.name === username);
 
-    function updateActiveDot() {
-        const width = scroller.clientWidth;
-        if (!width) return;
-        const activeIndex = Math.round(scroller.scrollLeft / width);
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === activeIndex);
-        });
-    }
-
-    scroller.addEventListener('scroll', updateActiveDot, { passive: true });
-    updateActiveDot();
-}
-
-function getPlayerProfileProgressData(username) {
-    const mainListPlayer = (window.leaderboardPlayers || []).find(p => p.name === username) || null;
-    const risingPlayer = (window.risingLeaderboardPlayers || []).find(p => p.name === username) || null;
-
-    const completedInMainList = (mainListPlayer?.completedLevels || [])
-        .filter(level => typeof level?.rank === 'number' && level.rank <= 150)
-        .length;
-
-    const completedInRising = Array.isArray(risingPlayer?.completedLevels)
-        ? risingPlayer.completedLevels.length
-        : 0;
-    const totalRisingLevels = Array.isArray(globalRisingLevels) ? globalRisingLevels.length : 0;
-
-    const isRisingContext = currentProfileListContext === 'rising' || (completedInRising > 0 && completedInMainList === 0);
-
-    if (isRisingContext && totalRisingLevels > 0) {
-        const percent = Math.round((completedInRising / totalRisingLevels) * 100);
-        return {
-            label: `${completedInRising}/${totalRisingLevels} Rising`,
-            progressTag: 'Rising',
-            percent
-        };
-    }
-
-    const percent = Math.round((completedInMainList / 150) * 100);
     return {
-        label: `${completedInMainList}/150 Main List`,
-        progressTag: 'Main List',
-        percent
+        source: isRising ? 'rising' : 'list',
+        players,
+        levels,
+        rank: rankIndex === -1 ? null : rankIndex + 1,
+        player: rankIndex === -1 ? null : players[rankIndex]
     };
+}
+
+function getYouTubeVideoId(url) {
+    if (!url || typeof url !== 'string') return '';
+
+    try {
+        const parsed = new URL(url);
+        const host = parsed.hostname.replace(/^www\./, '');
+        if (host === 'youtu.be') return parsed.pathname.slice(1).split('/')[0];
+        if (host === 'youtube.com' || host === 'm.youtube.com') {
+            if (parsed.pathname === '/watch') return parsed.searchParams.get('v') || '';
+            const match = parsed.pathname.match(/^\/(?:embed|shorts)\/([^/]+)/);
+            return match ? match[1] : '';
+        }
+    } catch (error) {
+        return '';
+    }
+
+    return '';
+}
+
+function handleProfileBannerLoad(img) {
+    const fallback = img.parentElement.querySelector('.profile-banner__fallback');
+    if (fallback) fallback.hidden = true;
+}
+
+function handleProfileBannerError(img) {
+    if (img.dataset.thumbnailSize === 'maxres') {
+        img.dataset.thumbnailSize = 'hq';
+        img.src = img.dataset.hqSrc;
+        return;
+    }
+
+    img.hidden = true;
 }
 
 // Tarjeta del jugador (columna derecha): usa el progreso real del jugador
@@ -473,15 +645,48 @@ function renderPlayerProfileCard(username) {
     const cardContainer = document.getElementById('profile-card-container');
     if (!cardContainer) return;
 
-    const progressData = getPlayerProfileProgressData(username);
+    const profileData = getProfileContextData(username);
+    const hardest = profileData.player && Array.isArray(profileData.player.completedLevels)
+        ? [...profileData.player.completedLevels].sort((a, b) => a.rank - b.rank)[0]
+        : null;
+    const hardestLevel = hardest
+        ? profileData.levels.find(level => level.rank === hardest.rank)
+        : null;
+    const videoId = hardestLevel ? getYouTubeVideoId(hardestLevel.verification) : '';
+    const imageMarkup = videoId
+        ? `<img
+                class="profile-banner__image"
+                src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg"
+                data-thumbnail-size="maxres"
+                data-hq-src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg"
+                onload="handleProfileBannerLoad(this)"
+                onerror="handleProfileBannerError(this)"
+                loading="lazy"
+                width="1280"
+                height="720"
+                alt="Miniatura de ${hardestLevel.name}"
+            >`
+        : '';
+    const fallbackText = hardest
+        ? `#${hardest.rank} ${hardest.level}`
+        : '';
+    const hardestLabel = hardest
+        ? `<span class="profile-banner__hardest">#${hardest.rank} ${hardest.level}</span>`
+        : '';
+    const rankLabel = profileData.rank === null ? '—' : `#${profileData.rank}`;
 
     cardContainer.innerHTML = `
         <div class="profile-card">
-            <div class="profile-card__top"></div>
-            <div class="profile-card__bottom"></div>
-
-            <div class="profile-card__avatar-wrap">
-                <div class="profile-card__avatar">
+            <div class="profile-banner">
+                <div class="profile-banner__fallback" role="img" aria-label="${fallbackText || 'Banner del perfil'}">
+                    ${fallbackText ? `<span>${fallbackText}</span>` : ''}
+                </div>
+                ${imageMarkup}
+                ${hardestLabel}
+            </div>
+            <div class="profile-identity">
+                <div class="profile-identity__avatar-column">
+                    <div class="profile-card__avatar">
                     <img
                         class="profile-card__avatar-img"
                         src="${getAvatarSrc(username, 0)}"
@@ -490,21 +695,13 @@ function renderPlayerProfileCard(username) {
                         onerror="handleAvatarError(this)"
                         alt="${username}"
                     >
-                </div>
-            </div>
-
-            <div class="profile-card__body">
-                <div class="profile-card__name">${username}</div>
-
-                <div class="profile-card__progress-block">
-                    <div class="profile-card__progress-label">
-                        <span class="profile-card__progress-count">${progressData.label}</span>
-                        <span class="profile-card__progress-tag">${progressData.progressTag}</span>
                     </div>
-                    <div class="profile-card__progress-track">
-                        <div class="profile-card__progress-fill" style="width: ${progressData.percent}%;"></div>
+                    <div class="profile-rank">
+                        <span class="profile-rank__value">${rankLabel}</span>
+                        <span class="profile-rank__label">RANK</span>
                     </div>
                 </div>
+                <h1 class="profile-card__name">${username}</h1>
             </div>
         </div>
     `;
@@ -515,10 +712,14 @@ function handleHashRouting() {
     // de perfil (#player/Nombre) necesitamos preservar mayúsculas/minúsculas
     // originales del username antes de decidir cómo tratar el resto de la ruta.
     const rawHash = window.location.hash.replace('#', '');
-    const isProfileRoute = /^player\//i.test(rawHash);
+    const routePath = rawHash.replace(/^\/+/, '');
+    const routeParts = routePath.split('/').filter(Boolean);
+    const isProfileRoute = /^player\//i.test(routePath);
+    const profileRouteParts = isProfileRoute ? routePath.slice('player/'.length).split('/') : [];
 
     // 1. Extraer el identificador del hash actual (ej: '#roulette' -> 'roulette')
-    let route = rawHash.toLowerCase();
+    let route = (routeParts[0] || '').toLowerCase();
+    const requestedLevelSlug = routeParts.length > 1 ? routeParts[1].toLowerCase() : '';
     if (!route) route = 'welcome'; // Sin hash → pantalla de bienvenida
 
     // Excepción única por si usas el alias heredado '#challenges' para la sección frk-dm
@@ -535,7 +736,10 @@ function handleHashRouting() {
 
     let targetSectionId;
     if (isProfileRoute) {
-        currentProfileUsername = decodeURIComponent(rawHash.slice('player/'.length));
+        currentProfileUsername = decodeURIComponent(profileRouteParts[0] || '');
+        if (profileRouteParts[1] === 'rising' || profileRouteParts[1] === 'list') {
+            currentProfileListContext = profileRouteParts[1];
+        }
         targetSectionId = 'tab-profile';
     } else {
         targetSectionId = `tab-${route}`;
@@ -573,6 +777,27 @@ function handleHashRouting() {
     if (currentProfileUsername) {
         playTheGlaiCatProfileAudio(currentProfileUsername);
         renderPlayerProfileLayout(currentProfileUsername);
+    }
+
+    if (route === 'list' || route === 'rising') {
+        const levels = route === 'list' ? globalLevels : globalRisingLevels;
+        const currentId = route === 'list' ? currentDetailLevelId : currentRisingDetailId;
+        const slugMatch = requestedLevelSlug
+            ? levels.find(level => getLevelSlug(level) === requestedLevelSlug)
+            : null;
+        const currentLevel = levels.find(level => level.id === currentId);
+        const firstVisible = route === 'list'
+            ? getVisibleLevels(levels)[0]
+            : levels[0];
+        const selectedLevel = slugMatch || currentLevel || firstVisible;
+
+        setMobileDetailView(route, Boolean(slugMatch));
+        if (selectedLevel) {
+            if (route === 'list') mostrarDetallesNivel(selectedLevel.id, false);
+            else mostrarDetalleRising(selectedLevel.id, false);
+        }
+    } else {
+        setMobileDetailView('', false);
     }
 }
 
@@ -732,15 +957,10 @@ async function inicializarSitio() {
 
         renderLeaderboard(globalLevels, 'leaderboard-container', 'leaderboardPlayers');
 
-        // Si la página se abrió directamente en #player/Nombre, el primer
-        // handleHashRouting() (disparado en DOMContentLoaded) puede haber
-        // ocurrido antes de que window.leaderboardPlayers existiera. Una vez
-        // calculado acá, se refresca el panel para que muestre los datos reales.
-        if (currentProfileUsername) {
-            renderPlayerProfileStats(currentProfileUsername);
-            renderPlayerProfileLevels(currentProfileUsername);
-        }
         renderLeaderboard(globalRisingLevels, 'rising-leaderboard-container', 'risingLeaderboardPlayers');
+        // El hash directo puede abrir un perfil antes de que se calculen ambos
+        // leaderboards; se renderiza de nuevo cuando las dos fuentes están listas.
+        if (currentProfileUsername) renderPlayerProfileLayout(currentProfileUsername);
 
         renderSidebar();
         renderRisingSidebar();
@@ -769,13 +989,9 @@ async function inicializarSitio() {
             risingViewToggleBtn.addEventListener('click', toggleRisingView);
         }
 
-        if (globalLevels.length > 0) {
-            mostrarDetallesNivel(globalLevels[0].id);
-        }
-
-        if (globalRisingLevels.length > 0) {
-            mostrarDetalleRising(globalRisingLevels[0].id);
-        }
+        if (globalLevels.length > 0) mostrarDetallesNivel(globalLevels[0].id, false);
+        if (globalRisingLevels.length > 0) mostrarDetalleRising(globalRisingLevels[0].id, false);
+        handleHashRouting();
 
         // Inicializar la sección FRK-DM
         await inicializarFrkDm();
@@ -840,15 +1056,25 @@ function getCreatorPrimary(creators, author) {
 // idPrefix distingue los IDs de card entre secciones (sidebar-item- vs
 // rising-sidebar-item-) para que no colisionen si algún día un nivel
 // aparece con el mismo id en ambos datasets.
-function renderNivelesEnSidebar(niveles, sidebarElId, idPrefix, onClickFn) {
+function renderNivelesEnSidebar(niveles, sidebarElId, idPrefix, onClickFn, selectedId) {
     const sidebar = document.getElementById(sidebarElId);
     if (!sidebar) return;
     sidebar.innerHTML = '';
 
     niveles.forEach(nivel => {
-        const item = document.createElement('div');
+        const item = document.createElement('button');
+        const isRising = sidebarElId === 'rising-sidebar';
+        const selectedLevelId = selectedId === undefined
+            ? (isRising ? currentRisingDetailId : currentDetailLevelId)
+            : selectedId;
         item.className = 'card level-card';
         item.id = `${idPrefix}${nivel.id}`;
+        item.type = 'button';
+        if (nivel.id === selectedLevelId) {
+            item.classList.add('active');
+            item.setAttribute('aria-current', 'true');
+        }
+        item.setAttribute('aria-label', `#${nivel.rank} ${nivel.name}, por ${getCreatorPrimary(nivel.creators, nivel.author)}`);
         item.style.marginBottom = 'var(--space-3)';
         item.style.cursor = 'pointer';
         item.style.display = 'flex';
@@ -857,19 +1083,29 @@ function renderNivelesEnSidebar(niveles, sidebarElId, idPrefix, onClickFn) {
         item.style.padding = 'var(--space-4)';
 
         item.onclick = () => onClickFn(nivel.id);
+        item.addEventListener('keydown', event => {
+            if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+            const items = Array.from(sidebar.querySelectorAll('.level-card'));
+            if (items.length < 2) return;
+            const currentIndex = items.indexOf(item);
+            const step = event.key === 'ArrowDown' ? 1 : -1;
+            const nextIndex = (currentIndex + step + items.length) % items.length;
+            event.preventDefault();
+            items[nextIndex].focus();
+        });
 
         item.innerHTML = `
             <div class="text-accent text-mono" style="font-size: 1.3rem; font-weight: 700; min-width: 45px;">#${nivel.rank}</div>
             <div style="flex: 1;">
-                <div class="text-display" style="font-weight: 600; font-size: 1.15rem; color: var(--text-primary); line-height: 1.2;">${nivel.name}</div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">por ${getCreatorPrimary(nivel.creators, nivel.author)}</div>
+                <div class="text-display level-card__name" style="font-weight: 600; font-size: 1.15rem; color: var(--text-primary); line-height: 1.2;">${nivel.name}</div>
+                <div class="level-card__creator" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">por ${getCreatorPrimary(nivel.creators, nivel.author)}</div>
             </div>
         `;
         sidebar.appendChild(item);
     });
 }
 
-function filtrarNivelesEnSidebar(niveles, searchTerm, sidebarElId, idPrefix, onClickFn) {
+function filtrarNivelesEnSidebar(niveles, searchTerm, sidebarElId, idPrefix, onClickFn, selectedId) {
     const term = searchTerm.toLowerCase().trim();
 
     const filteredLevels = niveles.filter(level => {
@@ -881,7 +1117,7 @@ function filtrarNivelesEnSidebar(niveles, searchTerm, sidebarElId, idPrefix, onC
         return false;
     });
 
-    renderNivelesEnSidebar(filteredLevels, sidebarElId, idPrefix, onClickFn);
+    renderNivelesEnSidebar(filteredLevels, sidebarElId, idPrefix, onClickFn, selectedId);
 }
 
 function renderSidebar() {
@@ -919,33 +1155,49 @@ function filterRisingLevels(searchTerm) {
     filtrarNivelesEnSidebar(globalRisingLevels, searchTerm, 'rising-sidebar', 'rising-sidebar-item-', mostrarDetalleRising);
 }
 
-function mostrarDetallesNivel(idNivel) {
-    document.querySelectorAll('#levels-sidebar .level-card').forEach(el => el.classList.remove('active'));
-    const activeItem = document.getElementById(`sidebar-item-${idNivel}`);
-    if (activeItem) activeItem.classList.add('active');
-
+function mostrarDetallesNivel(idNivel, updateHash = true) {
     const nivel = globalLevels.find(n => n.id === idNivel);
     if (!nivel) return;
 
+    document.querySelectorAll('#levels-sidebar .level-card').forEach(el => {
+        const isCurrent = el.id === `sidebar-item-${idNivel}`;
+        el.classList.toggle('active', isCurrent);
+        if (isCurrent) el.setAttribute('aria-current', 'true');
+        else el.removeAttribute('aria-current');
+    });
+
     currentDetailLevelId = idNivel;
+    if (updateHash) {
+        const targetHash = `#/list/${getLevelSlug(nivel)}`;
+        if (window.location.hash !== targetHash) window.location.hash = targetHash;
+    }
+    if (updateHash && window.innerWidth < 900) setMobileDetailView('list', true);
     renderDetalleNivel(nivel, 'level-details');
 }
 
-function mostrarDetalleRising(idNivel) {
-    document.querySelectorAll('#rising-sidebar .level-card').forEach(el => el.classList.remove('active'));
-    const activeItem = document.getElementById(`rising-sidebar-item-${idNivel}`);
-    if (activeItem) activeItem.classList.add('active');
-
+function mostrarDetalleRising(idNivel, updateHash = true) {
     const nivel = globalRisingLevels.find(n => n.id === idNivel);
     if (!nivel) return;
 
+    document.querySelectorAll('#rising-sidebar .level-card').forEach(el => {
+        const isCurrent = el.id === `rising-sidebar-item-${idNivel}`;
+        el.classList.toggle('active', isCurrent);
+        if (isCurrent) el.setAttribute('aria-current', 'true');
+        else el.removeAttribute('aria-current');
+    });
+
     currentRisingDetailId = idNivel;
+    if (updateHash) {
+        const targetHash = `#/rising/${getLevelSlug(nivel)}`;
+        if (window.location.hash !== targetHash) window.location.hash = targetHash;
+    }
+    if (updateHash && window.innerWidth < 900) setMobileDetailView('rising', true);
     renderDetalleNivel(nivel, 'rising-details');
 }
 
 // Núcleo genérico de renderizado del panel de detalle, compartido por
 // List y RISING. Recibe el nivel ya resuelto y el ID del contenedor destino.
-function renderDetalleNivel(nivel, detailPanelId) {
+function renderDetalleNivel(nivel, detailPanelId, recordUser = null) {
     const detailPanel = document.getElementById(detailPanelId);
     if (!detailPanel) return;
 
@@ -962,15 +1214,23 @@ function renderDetalleNivel(nivel, detailPanelId) {
 
     const puntosCalculados = getMaxPointsForPosition(nivel.rank).toFixed(2);
 
+    const records = Array.isArray(nivel.records)
+        ? recordUser
+            ? nivel.records.filter(record => record.user === recordUser)
+            : nivel.records
+        : [];
+    const noRecordsMessage = recordUser
+        ? `No hay record de ${recordUser} registrado para este nivel.`
+        : 'No se han validado récords adicionales para este nivel todavía.';
     let recordsHTML = `
         <div style="background: var(--bg-base); padding: var(--space-4); border-radius: var(--radius-md); border: 1px dashed var(--border); text-align: center;">
-            <p style="font-size: 0.9rem; color: var(--text-muted); font-style: italic; margin: 0;">No se han validado récords adicionales para este nivel todavía.</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); font-style: italic; margin: 0;">${noRecordsMessage}</p>
         </div>
     `;
 
-    if (nivel.records && nivel.records.length > 0) {
+    if (records.length > 0) {
         recordsHTML = `<ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2);">`;
-        nivel.records.forEach(rec => {
+        records.forEach(rec => {
             recordsHTML += `
                 <li style="background: var(--bg-base); border: 1px solid var(--border); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -986,7 +1246,14 @@ function renderDetalleNivel(nivel, detailPanelId) {
         recordsHTML += `</ul>`;
     }
 
+    const backRoute = detailPanelId === 'profile-level-details'
+        ? 'profile'
+        : detailPanelId === 'rising-details'
+            ? 'rising'
+            : 'list';
+
     detailPanel.innerHTML = `
+        <button type="button" class="mobile-detail-back" onclick="volverALista('${backRoute}')">← Volver</button>
         <div class="card" style="padding: var(--space-6); background: var(--bg-surface); border: 1px solid var(--border); box-shadow: var(--shadow-md);">
             <div style="margin-bottom: var(--space-4);">
                 <h1 class="text-display" style="font-size: 2.5rem; margin: 0; font-weight: 700; color: var(--text-primary);">${nivel.name}</h1>
@@ -1011,7 +1278,7 @@ function renderDetalleNivel(nivel, detailPanelId) {
             </div>
             `}
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6);">
+            <div class="level-meta-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6);">
                 <div style="background: var(--bg-base); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); text-align: center; cursor: pointer; transition: all var(--transition-fast);" onclick="copyToClipboard('${nivel.id}'); this.style.background='var(--bg-elevated)'; setTimeout(() => this.style.background='var(--bg-base)', 200);">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">ID del Nivel</div>
                     <div class="text-mono" style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--accent-light);">${nivel.id}</div>
@@ -1027,7 +1294,7 @@ function renderDetalleNivel(nivel, detailPanelId) {
             </div>
 
             <div>
-                <h3 class="text-display" style="font-size: 1.2rem; margin-bottom: var(--space-3); border-bottom: 1px solid var(--border); padding-bottom: var(--space-2);">Records Registrados (${nivel.records ? nivel.records.length : 0})</h3>
+                <h3 class="text-display" style="font-size: 1.2rem; margin-bottom: var(--space-3); border-bottom: 1px solid var(--border); padding-bottom: var(--space-2);">Records Registrados (${records.length})</h3>
                 ${recordsHTML}
             </div>
         </div>
@@ -1276,6 +1543,7 @@ niveles.forEach(nivel => {
     const rankedPlayers = Object.values(playerRegistry).sort((a, b) => b.points - a.points);
 
     const isRisingLeaderboard = containerId === 'rising-leaderboard-container';
+    const profileSourcePath = isRisingLeaderboard ? '/rising' : '/list';
     const emptyState = `
         <div style="padding: var(--space-8); text-align: center; color: var(--text-muted); background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg);">
             No se encontraron récords registrados en la lista todavía.
@@ -1302,7 +1570,7 @@ niveles.forEach(nivel => {
     rankedPlayers.forEach((player, idx) => {
         const rank = idx + 1;
         htmlMobile += `
-            <div class="leaderboard-mobile-row" onclick="window.location.hash = 'player/' + encodeURIComponent(window.${storageKey}[${idx}].name)">
+            <div class="leaderboard-mobile-row" onclick="window.location.hash = 'player/' + encodeURIComponent(window.${storageKey}[${idx}].name) + '${profileSourcePath}'">
                 <div class="leaderboard-mobile-rank">#${rank}</div>
                 <div class="leaderboard-mobile-name">${player.name}</div>
                 <div class="leaderboard-mobile-arrow">→</div>
@@ -1337,7 +1605,7 @@ niveles.forEach(nivel => {
 
         htmlTable += `
             <tr
-                onclick='window.location.hash = "player/" + encodeURIComponent(window.${storageKey}[${idx}].name)'
+                onclick='window.location.hash = "player/" + encodeURIComponent(window.${storageKey}[${idx}].name) + "${profileSourcePath}"'
                 style="border-bottom: 1px solid var(--border); transition: background var(--transition-fast); cursor: pointer;"
                 onmouseover="this.style.background='var(--bg-elevated)'"
                 onmouseout="this.style.background='transparent'">
